@@ -97,7 +97,7 @@ canvas.sg{width:100%;height:150px;background:#fff;border:1px solid var(--ln);bor
 <div id="vo" class="camp" hidden><div class="camh" id="vo-h"><span>🎤 Voice draw</span><button id="vo-x" title="Close voice">✕</button></div>
 <div id="vo-st">Voice is off.</div>
 <div class="camb2"><select id="vo-lang" title="Voice language"><option value="en-IN">English</option><option value="hi-IN">हिन्दी</option></select><button id="vo-mic" title="Restart listening">🎤</button></div>
-<details open><summary>What to say</summary>Say direction + length together, then pause:<br>“up zero point five”, “down one point two”, “up right 0.3”, “north east two”, “down left five centimeter”.<br>Directions: up / down, up-right, up-left, down-right, down-left (or north, south, east, west combos). Hindi: ऊपर, नीचे, दाएं, बाएं.<br>Say direction and length in either order, or one after the other. “undo” removes the last piece, “stop” closes voice.</details></div>
+<details open><summary>What to say</summary><b>Direction + length</b> (then pause): “up 0.5”, “down 1.2”, “in 2”, “right 0.3”, “left 1”, “out 0.5”, “out 5 centimeter”.<br>Up = ↑ &nbsp; Down = ↓ &nbsp; <b>In</b> = ↗ (up right) &nbsp; <b>Left</b> = ↖ (up left) &nbsp; <b>Right</b> = ↘ (down right) &nbsp; <b>Out</b> = ↙ (down left). Hindi: ऊपर, नीचे, अंदर, बाहर, बाएं, दाएं.<br><b>Symbols</b> (placed at the end of the selected piece): “regulator”, “MR”, “MF” or “male female”, “meter”, “union”, “socket”, “IV” or “isolation valve”, “AV” or “appliance valve” or “kitchen point”. “adaptor” is automatic (2 per meter).<br>You can add a symbol after a piece: “up 2 regulator”. Say “undo” to remove the last piece, “stop” to close.</details></div>
 <div id="cam" class="camp" hidden><div class="camh" id="cam-h"><span>✋ Camera draw</span><span><button id="cam-flip" title="Switch front / back camera">🔄</button><button id="cam-x" title="Close camera">✕</button></span></div>
 <div class="camv"><video id="cam-v" playsinline muted></video><canvas id="cam-c"></canvas><div id="cam-big"></div></div>
 <div id="cam-st">Camera is off.</div>
@@ -434,21 +434,28 @@ function parseLen(t){
  let v=lit!==null?lit:parseFloat(acc+'.'+(fr||'0'));if(half)v+=.5;
  if(!isFinite(v))return 0;if(cm)v/=100;v=r1(v);return v>0&&v<=100?v:0}
 
-const UPW=new Set(['up','upward','upwards','top','north','upar','ऊपर']),DNW=new Set(['down','downward','downwards','bottom','south','neeche','niche','नीचे']),RTW=new Set(['right','east','dayen','dayein','daayen','दाएं','दायें','दाहिने']),LTW=new Set(['left','west','bayen','baayen','bayein','बाएं','बायें']);
-const CMPW={northeast:'NE',northwest:'NW',southeast:'SE',southwest:'SW',ne:'NE',nw:'NW',se:'SE',sw:'SW'};
+const UPW=new Set(['up','upward','upwards','top','north','upar','ऊपर']),DNW=new Set(['down','downward','downwards','bottom','south','neeche','niche','नीचे']),RTW=new Set(['right','east','dayen','dayein','daayen','दाएं','दायें','दाहिने']),LTW=new Set(['left','west','bayen','baayen','bayein','बाएं','बायें']),INW=new Set(['in','andar','अंदर']),OUTW=new Set(['out','bahar','बाहर']);
+const CMPW={northeast:'NE',northwest:'NW',southeast:'SE',southwest:'SW'};
+/* spoken names of the drawing directions: up=U, down=D, in=NE (up right), left=NW (up left), right=SE (down right), out=SW (down left) */
+const SYMRX=[['MR',/\bm\s?r\b|\bmeter\s+regulat\w*/],['REG',/\bregulat\w*|\breg\b/],['MF',/\bm\s?f\b|\bmale\s*-?\s*female\b|\bemf\b/],['IV',/\bi\s?v\b|\bisolation\b/],['AV',/\ba\s?v\b|\bappliance\b|\bkitchen\b|\bk\s?p\b/],['UN',/\bunion\b/],['SOCK',/\bsocket\b/],['ADAPT',/\badapt[oe]r\b/]];
 function parseVoice(t){
- const low=String(t).toLowerCase(),tk=low.match(/[\p{L}\p{M}]+/gu)||[];
+ const low=String(t).toLowerCase(),flat=low.replace(/\./g,''),tk=low.match(/[\p{L}\p{M}]+/gu)||[];
  if(tk.includes('undo'))return{cmd:'undo'};if(tk.includes('stop'))return{cmd:'stop'};
- let v=null,h=null,bad=false;
+ let v=null,h=null,x=null,bad=false;
  for(const w of tk){const c=CMPW[w];if(c){v=c[0]==='N'?'U':'D';h=c[1]==='E'?'R':'L';continue}
   if(UPW.has(w)){if(v==='D')bad=true;v='U'}else if(DNW.has(w)){if(v==='U')bad=true;v='D'}
-  else if(RTW.has(w)){if(h==='L')bad=true;h='R'}else if(LTW.has(w)){if(h==='R')bad=true;h='L'}}
+  else if(RTW.has(w)){if(h==='L')bad=true;h='R'}else if(LTW.has(w)){if(h==='R')bad=true;h='L'}
+  else if(INW.has(w)){if(x==='SW')bad=true;x='NE'}else if(OUTW.has(w)){if(x==='NE')bad=true;x='SW'}}
+ const len=parseLen(low);let sym=null;
+ for(const[k,rx]of SYMRX)if(rx.test(flat)){sym=k;break}
+ if(!sym&&len===0&&/\bmet(er|re)\b/.test(flat))sym='MET';   /* "meter" with a number is the unit, without a number it is the Meter symbol */
  let dir=null,why='';
- if(bad)why='Direction unclear';
+ if(bad||(x&&(v||h)))why='Direction unclear';
  else if(v&&h)dir={UR:'NE',UL:'NW',DR:'SE',DL:'SW'}[v+h];
- else if(v&&!h)dir=v;
- else if(h)why='Say up or down with '+(h==='R'?'right':'left')+', e.g. “up '+(h==='R'?'right':'left')+'”';
- return{dir,len:parseLen(low),why}}
+ else if(x)dir=x;
+ else if(v)dir=v;
+ else if(h)dir=h==='R'?'SE':'NW';
+ return{dir,len,why,sym}}
 function ui(){
 const $=s=>document.querySelector(s);
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.opacity=1;clearTimeout(tt);tt=setTimeout(()=>t.style.opacity=0,3400)}
@@ -726,23 +733,29 @@ async function askMic(){try{if(!navigator.mediaDevices||!navigator.mediaDevices.
 /* ===== Voice mode (V6): say direction + length ===== */
 const VO={on:false,rec:null,pend:null,pt:0,lang:'en-IN'};
 const vsay=m=>{$('#vo-st').textContent=m};
-function voAdd(dir,len,said){const why=whyNot(dir);if(why){toast(why);vsay('✋ '+AR[dir]+' not allowed here: '+why+'.');return}
- endEdit();S.dir=dir;if(pushSeg({len})){save();paint();vsay('✓ '+AR[dir]+' '+fm(len)+' m added (heard “'+said+'”). Say the next one. Wrong? say “undo”.')}else vsay('Could not add that piece.')}
+const SYMN={REG:'Regulator',MR:'MR',MF:'M.F.',MET:'Meter',UN:'Union',SOCK:'Socket',IV:'Isolation valve',AV:'Appliance valve (K.P.)'};
+function voAdd(dir,len,said){const why=whyNot(dir);if(why){toast(why);vsay('✋ '+AR[dir]+' not allowed here: '+why+'.');return false}
+ endEdit();S.dir=dir;if(pushSeg({len})){save();paint();vsay('✓ '+AR[dir]+' '+fm(len)+' m added (heard “'+said+'”). Say the next one. Wrong? say “undo”.');return true}vsay('Could not add that piece.');return false}
+function voSym(t){if(t==='ADAPT'){vsay('Adaptors are automatic: 2 are counted for every meter. Say “meter” to add a meter.');return}
+ const b=$('#pal [data-p="'+t+'"]');if(!b){vsay('That symbol is not available.');return}
+ endEdit();const m0=JSON.stringify(S.segs);b.click();
+ vsay(JSON.stringify(S.segs)!==m0?'✓ '+SYMN[t]+' added. Say the next one.':'Could not place '+SYMN[t]+' here (see the message on screen).')}
 function voHandle(said){const r=parseVoice(said),now=Date.now();
  if(r.cmd==='undo'){const s=S.segs.pop();if(s){S.cur=s.from;save();paint();vsay('↶ Last piece removed.')}else vsay('Nothing to undo.');VO.pend=null;return}
  if(r.cmd==='stop'){voStop();return}
  if(VO.pend&&now-VO.pt>8000)VO.pend=null;
  if(r.why){vsay('Heard “'+said+'”. '+r.why+'.');return}
+ if(r.sym&&!r.dir&&!r.len){VO.pend=null;voSym(r.sym);return}
  let dir=r.dir||(VO.pend&&VO.pend.dir)||null,len=r.len||(VO.pend&&VO.pend.len)||0;
- if(dir&&len){VO.pend=null;voAdd(dir,len,said);return}
+ if(dir&&len){VO.pend=null;if(voAdd(dir,len,said)&&r.sym)voSym(r.sym);return}
  if(dir){VO.pend={dir,len:0};VO.pt=now;vsay(AR[dir]+' heard. Now say the length …');return}
  if(len){VO.pend={dir:null,len};VO.pt=now;vsay(fm(len)+' m heard. Now say the direction …');return}
- vsay('Heard “'+said+'”. Say e.g. “up zero point five”.')}
+ vsay('Heard “'+said+'”. Say e.g. “up zero point five”, “in two”, or “regulator”.')}
 function voListen(){if(!VO.on||!SR)return;try{VO.rec&&VO.rec.abort()}catch(e){}
  const r=new SR();VO.rec=r;r.lang=VO.lang=$('#vo-lang').value;r.continuous=true;r.interimResults=false;r.maxAlternatives=4;
  r.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){if(!e.results[i].isFinal)continue;
    const alts=[...e.results[i]].map(a=>a.transcript);let pick=alts[0]||'';
-   for(const a of alts){const p=parseVoice(a);if(p.cmd||(p.dir&&p.len)){pick=a;break}}
+   for(const a of alts){const p=parseVoice(a);if(p.cmd||p.sym||(p.dir&&p.len)){pick=a;break}}
    voHandle(pick)}};
  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){vsay(permWhy()||'Microphone is blocked for this site. Tap the lock / site-settings icon in the address bar, set Microphone to Allow, then reload the page.');VO.on=false;$('#vob').classList.remove('on')}};
  r.onend=()=>{if(VO.on&&VO.rec===r)setTimeout(voListen,300)};
