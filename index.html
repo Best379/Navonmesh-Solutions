@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DPNG Job Card</title>
+<style>:root{color-scheme:light dark}body{font:16px system-ui,sans-serif;margin:auto;padding:24px 16px;max-width:380px}h3{margin:0 0 12px}label{display:block;font-size:12px;margin-top:10px}input{width:100%;box-sizing:border-box;padding:10px;margin-top:3px;font:inherit}button{padding:10px;font:inherit;border-radius:10px;border:1px solid #888;background:transparent;color:inherit}button:disabled{opacity:.5}button.on,button.pri{background:#0b6e4f;color:#fff;border-color:#0b6e4f}.g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}#m{font-size:14px;margin-top:8px;min-height:20px;color:#c2410c}#m.ok{color:#0b6e4f}#m.bz{color:inherit}.sp{display:inline-block;width:14px;height:14px;border:2px solid #888;border-top-color:#0b6e4f;border-radius:50%;animation:r .8s linear infinite;vertical-align:-2px;margin-right:8px}@keyframes r{to{transform:rotate(360deg)}}</style></head><body>
+<h3>DPNG Job Card · Sign in</h3>
+<div class="g"><button id="tu" class="on">User</button><button id="ta">Admin</button></div>
+<label>Email<input id="em" type="email" autocomplete="username"></label>
+<label id="nl">Your name (for registration)<input id="nm"></label>
+<label>Password (4+ characters)<input id="pw" type="password" autocomplete="current-password"></label>
+<label id="sl" hidden>Admin setup code (first time only)<input id="sc" type="password"></label>
+<div id="m"></div>
+<div class="g"><button id="go" class="pri">Sign in</button><button id="rg">Register</button></div>
+<button id="st" hidden style="width:100%;margin-top:8px">First-time admin setup</button>
+<script>
+(()=>{
+const URL0='https://script.google.com/macros/s/AKfycbwJD4ojzPM34gunnrlzPYtUU9z9jaF02AMX0z7flWYBC-XqXkdFTmn2_XIhiRq1fE6v/exec',ADM='shubhampaswan567@gmail.com',$=s=>document.querySelector(s);
+let DV=localStorage.getItem('dpng_dev');if(!DV){DV='d'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('dpng_dev',DV)}
+let SE=null;try{SE=JSON.parse(localStorage.getItem('dpng_sess')||'null')}catch(e){}
+const api=async o=>(await fetch(URL0,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(Object.assign({device:DV},o))})).json();
+const btns=['#go','#rg','#st'];
+function busy(t){btns.forEach(b=>$(b).disabled=true);$('#m').className='bz';$('#m').innerHTML='<span class="sp"></span>'+t}
+function free(t,c){btns.forEach(b=>$(b).disabled=false);$('#m').className=c||'';$('#m').textContent=t||''}
+function run(h){window.DPNG_LOADER=1;window.DPNG_URL=URL0;document.open();document.write(h);document.close()}
+function am(m){$('#tu').className=m==='u'?'on':'';$('#ta').className=m==='a'?'on':'';$('#rg').hidden=$('#nl').hidden=m==='a';$('#sl').hidden=$('#st').hidden=m!=='a';if(m==='a')$('#em').value=ADM}
+$('#tu').onclick=()=>am('u');$('#ta').onclick=()=>am('a');
+async function load(){busy('Loading the app... first time can take a few seconds');
+ try{const r=await api({action:'app',token:SE.token});
+  if(!r.ok){SE=null;localStorage.removeItem('dpng_sess');free(r.err||'Please sign in again');return}
+  try{localStorage.setItem('dpng_app',r.html)}catch(e){}run(r.html)}
+ catch(e){const c=localStorage.getItem('dpng_app');if(c)run(c);else free('Cannot reach the server. Check your internet.')}}
+async function sub(act){const em=$('#em').value.trim().toLowerCase(),pw=$('#pw').value;
+ if(!em||pw.length<4){free('Enter your email and a password of 4+ characters');return}
+ busy(act==='login'?'Signing in...':act==='register'?'Registering...':'Setting up admin...');
+ try{const r=await api({action:act,email:em,password:pw,name:$('#nm').value.trim(),setup:$('#sc').value});
+  if(!r.ok){free(r.err||'Failed');return}
+  if(act==='login'){SE={email:em,name:r.name,role:r.role,token:r.token,chk:Date.now()};localStorage.setItem('dpng_sess',JSON.stringify(SE));load()}
+  else free(act==='register'?'Registered. Ask the admin to activate you, then sign in.':'Admin created. Now sign in.','ok')}
+ catch(e){free('Cannot reach the server. Check your internet.')}}
+$('#go').onclick=()=>sub('login');$('#rg').onclick=()=>sub('register');$('#st').onclick=()=>sub('adminSetup');
+if(SE){const c=localStorage.getItem('dpng_app');if(navigator.onLine)load();else if(c)run(c)}
+})();
+</script></body></html>
