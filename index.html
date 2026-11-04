@@ -30,7 +30,7 @@ function am(m){if(m==='a'&&ADMIN_READY){free('Admin is already set up. Sign in w
 $('#tu').onclick=()=>am('u');$('#ta').onclick=()=>am('a');
 async function load(){busy('Loading the app... first time can take a few seconds');
  try{const r=await api({action:'app',token:SE.token},40000);
-  if(!r.ok){SE=null;localStorage.removeItem('dpng_sess');free(r.err||'Please sign in again');return}
+  if(!r.ok){if(r.code==='DENIED'){SE=null;localStorage.removeItem('dpng_sess');free(r.err||'Please sign in again');return}const c=localStorage.getItem('dpng_app');if(c){run(c);return}free(r.err||'Could not load the app. Please try again.');return}
   try{localStorage.setItem('dpng_app',r.html)}catch(e){}run(r.html)}
  catch(e){free('Cannot reach the server. Check your internet and try again.')}}
 async function sub(act){const em=$('#em').value.trim().toLowerCase(),pw=$('#pw').value;
