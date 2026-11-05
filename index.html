@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a2540"><title>Navonmesh Solutions · DPNG Job Card</title>
+<script>try{if(localStorage.getItem('dpng_sess'))document.documentElement.className='in'}catch(e){}</script>
+<style>
+:root{color-scheme:light dark;--bg:#eef2f7;--cd:#fff;--tx:#0a1a2f;--mu:#51627a;--ln:#c8d3e0;--ac:#0057d9;--wa:#c2410c;--ok:#0a7d4f}
+@media (prefers-color-scheme:dark){:root{--bg:#0a1220;--cd:#111c2e;--tx:#e8f0fa;--mu:#93a6bf;--ln:#25374f;--ac:#4d9dff;--wa:#ffb74d;--ok:#46d39a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100dvh}
+.hero{background:radial-gradient(120% 120% at 50% 0,#12396b 0,#0a2540 60%,#050d1a 100%);color:#fff;text-align:center;padding:calc(34px + env(safe-area-inset-top,0px)) 16px 30px}
+.lg{width:64px;height:64px;margin:0 auto 12px;border-radius:17px;background:linear-gradient(135deg,#ffb020,#e65100);display:grid;place-items:center;font-size:38px;font-weight:800;box-shadow:0 8px 24px #0008}
+.hero h1{margin:0;font-size:25px;letter-spacing:.4px}.hero p{margin:6px 0 0;color:#a9c1de;font-size:14px}
+main{max-width:380px;margin:-14px auto 0;padding:0 16px 24px}.card{background:var(--cd);border:1px solid var(--ln);border-radius:14px;padding:16px;box-shadow:0 6px 20px #0a254022}
+h3{margin:0 0 4px;font-size:15px;color:var(--ac)}label{display:block;font-size:12px;font-weight:600;color:var(--mu);margin-top:10px}
+input{width:100%;padding:10px;margin-top:3px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:8px}input:focus{outline:2px solid var(--ac);outline-offset:-1px}
+button{padding:10px;font:inherit;border-radius:10px;border:1px solid var(--ln);background:transparent;color:inherit}button:disabled{opacity:.5}button.on,button.pri{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:600}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}#m{font-size:14px;margin:10px 0;min-height:20px;color:var(--wa)}#m.ok{color:var(--ok)}#m.bz{color:inherit}.in #f{display:none}
+.sp{display:inline-block;width:14px;height:14px;border:2px solid #888;border-top-color:var(--ac);border-radius:50%;animation:r .8s linear infinite;vertical-align:-2px;margin-right:8px}@keyframes r{to{transform:rotate(360deg)}}
+#wl{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 0,#12396b 0,#0a2540 55%,#050d1a 100%);color:#fff;text-align:center;transition:opacity .5s}#wl.out{opacity:0;pointer-events:none}
+#wl .lg{width:76px;height:76px;font-size:44px;margin-bottom:18px}#wl h2{margin:0;font-size:28px;letter-spacing:.4px}#wl p{margin:8px 0 0;color:#a9c1de;font-size:14px}
+</style></head><body>
+<div id="wl"><div><div class="lg">N</div><h2>Navonmesh Solutions</h2><p id="ws">DPNG Job Card · Engineering Suite</p></div></div>
+<div class="hero"><div class="lg">N</div><h1>Navonmesh Solutions</h1><p>DPNG Job Card · Engineering Suite</p></div>
+<main><div class="card">
+<div id="m"></div>
+<div id="f">
+<h3>Sign in</h3>
+<div class="g"><button id="tu" class="on">User</button><button id="ta">Admin</button></div>
+<label>Email<input id="em" type="email" autocomplete="username"></label>
+<label id="nl">Your name (for registration)<input id="nm"></label>
+<label>Password (4+ characters)<input id="pw" type="password" autocomplete="current-password"></label>
+<label id="sl" hidden>Admin setup code (first time only)<input id="sc" type="password"></label>
+<div class="g"><button id="go" class="pri">Sign in</button><button id="rg">Register</button></div>
+<button id="st" hidden style="width:100%;margin-top:8px">First-time admin setup</button>
+</div></div></main>
+<script>
+(()=>{
+const URL0='https://script.google.com/macros/s/AKfycbwJD4ojzPM34gunnrlzPYtUU9z9jaF02AMX0z7flWYBC-XqXkdFTmn2_XIhiRq1fE6v/exec',ADM='shubhampaswan567@gmail.com',$=s=>document.querySelector(s);
+let DV=null,SE=null;
+/* bring back sign-in, device id and cached app from IndexedDB if the phone cleared its normal storage */
+const idbAll=()=>new Promise(res=>{try{const r=indexedDB.open('dpng_offline',1);r.onupgradeneeded=()=>{const x=r.result;if(!x.objectStoreNames.contains('kv'))x.createObjectStore('kv');if(!x.objectStoreNames.contains('q'))x.createObjectStore('q',{keyPath:'key'})};
+ r.onsuccess=()=>{const x=r.result,m={};try{const t=x.transaction('kv','readonly'),c=t.objectStore('kv').openCursor();c.onsuccess=()=>{const z=c.result;if(z){m[z.key]=z.value;z.continue()}};t.oncomplete=()=>res(m);t.onerror=t.onabort=()=>res({})}catch(e){res({})}};r.onerror=r.onblocked=()=>res({})}catch(e){res({})}});
+const idbSet=(k,v)=>{try{const r=indexedDB.open('dpng_offline',1);r.onsuccess=()=>{try{r.result.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}}catch(e){}};
+async function restore(){let m={};try{m=await idbAll()}catch(e){}
+ for(const k of['dpng_sess','dpng_app']){try{if(localStorage.getItem(k)==null&&m[k]!=null)localStorage.setItem(k,m[k])}catch(e){}}
+ let d=localStorage.getItem('dpng_dev')||m.dpng_dev;if(!d){d='d'+Math.random().toString(36).slice(2)+Date.now().toString(36)}
+ try{localStorage.setItem('dpng_dev',d)}catch(e){}if(m.dpng_dev!==d)idbSet('dpng_dev',d);DV=d;
+ try{SE=JSON.parse(localStorage.getItem('dpng_sess')||'null')}catch(e){}
+ if(SE)document.documentElement.className='in'}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+const isMail=e=>/^[a-z0-9](?:[a-z0-9._%+-]{0,62}[a-z0-9])?@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/.test(e)&&!/\.\./.test(e)&&e.split('@')[1].split('.').pop().length>=2;
+const api=async(o,ms)=>{const ac=new AbortController(),t=setTimeout(()=>ac.abort(),ms||25000);
+ try{return await(await fetch(URL0,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(Object.assign({device:DV},o)),signal:ac.signal})).json()}finally{clearTimeout(t)}};
+const btns=['#go','#rg','#st'];
+function busy(t){btns.forEach(b=>$(b).disabled=true);$('#m').className='bz';$('#m').innerHTML='<span class="sp"></span>'+t}
+function free(t,c){document.documentElement.className='';btns.forEach(b=>$(b).disabled=false);$('#m').className=c||'';$('#m').textContent=t||''}
+function run(h){window.DPNG_LOADER=1;window.DPNG_ADMIN_READY=ADMIN_READY;window.DPNG_URL=URL0;document.open();document.write(h);document.close()}
+let ADMIN_READY=false;
+function am(m){if(m==='a'&&ADMIN_READY){free('Admin is already set up. Sign in with your admin email.','');return}$('#tu').className=m==='u'?'on':'';$('#ta').className=m==='a'?'on':'';$('#rg').hidden=$('#nl').hidden=m==='a';$('#sl').hidden=$('#st').hidden=m!=='a';$('#em').value='';$('#em').placeholder=m==='a'?'Admin email':'your@email.com'}
+$('#tu').onclick=()=>am('u');$('#ta').onclick=()=>am('a');
+async function load(){busy('Loading the app... first time can take a few seconds');
+ const c=localStorage.getItem('dpng_app');if(c&&!navigator.onLine){run(c);return}
+ try{const r=await api({action:'app',token:SE.token},40000);
+  if(!r.ok){if(r.code==='DENIED'){SE=null;localStorage.removeItem('dpng_sess');free(r.err||'Please sign in again');return}if(c){run(c);return}free(r.err||'Could not load the app. Please try again.');return}
+  try{localStorage.setItem('dpng_app',r.html)}catch(e){}run(r.html)}
+ catch(e){if(c){run(c);return}free('Cannot reach the server. Check your internet and try again.')}}
+async function sub(act){const em=$('#em').value.trim().toLowerCase(),pw=$('#pw').value;
+ if(!isMail(em)){free('Enter a real email address, for example name@gmail.com');return}
+ if(pw.length<4){free('Password must be 4+ characters');return}
+ if(!navigator.onLine){free('You are offline. Signing in or registering the first time needs internet.');return}
+ busy(act==='login'?'Signing in...':act==='register'?'Registering...':'Setting up admin...');
+ try{const r=await api({action:act,email:em,password:pw,name:$('#nm').value.trim(),setup:$('#sc').value});
+  if(!r.ok){free(r.err||'Failed');return}
+  if(act==='login'){SE={email:em,name:r.name,role:r.role,token:r.token,chk:Date.now()};localStorage.setItem('dpng_sess',JSON.stringify(SE));load()}
+  else free(act==='register'?'Registered. Ask the admin to activate you, then sign in.':'Admin created. Now sign in.','ok')}
+ catch(e){free('Cannot reach the server. Check your internet.')}}
+$('#go').onclick=()=>sub('login');$('#rg').onclick=()=>sub('register');$('#st').onclick=()=>sub('adminSetup');
+function start(){if(!SE)return;const c=localStorage.getItem('dpng_app');
+ if(c){if(navigator.onLine)api({action:'app',token:SE.token},60000).then(r=>{if(r&&r.ok)localStorage.setItem('dpng_app',r.html)}).catch(()=>{});run(c)}
+ else load()}
+(async()=>{await restore();
+ if(SE)$('#ws').textContent='Welcome back, '+(SE.name||SE.email);
+ setTimeout(()=>{$('#wl').classList.add('out');setTimeout(()=>$('#wl').style.display='none',520)},SE?400:1300);
+ try{const r=await api({action:'status'},8000);if(r&&r.ok&&r.adminReady){ADMIN_READY=true;$('#ta').hidden=true;$('#st').hidden=true;$('#sl').hidden=true}}catch(e){}})();
+window.addEventListener('load',()=>setTimeout(async()=>{await restore();start()},0));
+})();
+</script></body></html>
