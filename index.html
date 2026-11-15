@@ -1,84 +1,1188 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a2540"><title>Navonmesh Solutions · DPNG Job Card</title>
-<script>try{if(localStorage.getItem('dpng_sess'))document.documentElement.className='in'}catch(e){}</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050a12">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<title>DPNG Job Card · Secure Access</title>
 <style>
-:root{color-scheme:light dark;--bg:#eef2f7;--cd:#fff;--tx:#0a1a2f;--mu:#51627a;--ln:#c8d3e0;--ac:#0057d9;--wa:#c2410c;--ok:#0a7d4f}
-@media (prefers-color-scheme:dark){:root{--bg:#0a1220;--cd:#111c2e;--tx:#e8f0fa;--mu:#93a6bf;--ln:#25374f;--ac:#4d9dff;--wa:#ffb74d;--ok:#46d39a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100dvh}
-.hero{background:radial-gradient(120% 120% at 50% 0,#12396b 0,#0a2540 60%,#050d1a 100%);color:#fff;text-align:center;padding:calc(34px + env(safe-area-inset-top,0px)) 16px 30px}
-.lg{width:64px;height:64px;margin:0 auto 12px;border-radius:17px;background:linear-gradient(135deg,#ffb020,#e65100);display:grid;place-items:center;font-size:38px;font-weight:800;box-shadow:0 8px 24px #0008}
-.hero h1{margin:0;font-size:25px;letter-spacing:.4px}.hero p{margin:6px 0 0;color:#a9c1de;font-size:14px}
-main{max-width:380px;margin:-14px auto 0;padding:0 16px 24px}.card{background:var(--cd);border:1px solid var(--ln);border-radius:14px;padding:16px;box-shadow:0 6px 20px #0a254022}
-h3{margin:0 0 4px;font-size:15px;color:var(--ac)}label{display:block;font-size:12px;font-weight:600;color:var(--mu);margin-top:10px}
-input{width:100%;padding:10px;margin-top:3px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:8px}input:focus{outline:2px solid var(--ac);outline-offset:-1px}
-button{padding:10px;font:inherit;border-radius:10px;border:1px solid var(--ln);background:transparent;color:inherit}button:disabled{opacity:.5}button.on,button.pri{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:600}
-.g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}#m{font-size:14px;margin:10px 0;min-height:20px;color:var(--wa)}#m.ok{color:var(--ok)}#m.bz{color:inherit}.in #f{display:none}
-.sp{display:inline-block;width:14px;height:14px;border:2px solid #888;border-top-color:var(--ac);border-radius:50%;animation:r .8s linear infinite;vertical-align:-2px;margin-right:8px}@keyframes r{to{transform:rotate(360deg)}}
-#wl{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 0,#12396b 0,#0a2540 55%,#050d1a 100%);color:#fff;text-align:center;transition:opacity .5s}#wl.out{opacity:0;pointer-events:none}
-#wl .lg{width:76px;height:76px;font-size:44px;margin-bottom:18px}#wl h2{margin:0;font-size:28px;letter-spacing:.4px}#wl p{margin:8px 0 0;color:#a9c1de;font-size:14px}
-</style></head><body>
-<div id="wl"><div><div class="lg">N</div><h2>Navonmesh Solutions</h2><p id="ws">DPNG Job Card · Engineering Suite</p></div></div>
-<div class="hero"><div class="lg">N</div><h1>Navonmesh Solutions</h1><p>DPNG Job Card · Engineering Suite</p></div>
-<main><div class="card">
-<div id="m"></div>
-<div id="f">
-<h3>Sign in</h3>
-<div class="g"><button id="tu" class="on">User</button><button id="ta">Admin</button></div>
-<label>Email<input id="em" type="email" autocomplete="username"></label>
-<label id="nl">Your name (for registration)<input id="nm"></label>
-<label>Password (4+ characters)<input id="pw" type="password" autocomplete="current-password"></label>
-<label id="sl" hidden>Admin setup code (first time only)<input id="sc" type="password"></label>
-<div class="g"><button id="go" class="pri">Sign in</button><button id="rg">Register</button></div>
-<button id="st" hidden style="width:100%;margin-top:8px">First-time admin setup</button>
-</div></div></main>
+:root{
+  --bg:#080f1a;--bg2:#050a12;--cy:#00f3ff;--mg:#ff00ea;--em:#00ff88;--cr:#ff3b5c;--am:#ffee00;
+  --tx:#e8f6ff;--mut:#8fa6b8;--ln:rgba(0,243,255,.28);--glass:rgba(8,15,26,.72);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased;text-size-adjust:100%}
+[hidden]{display:none!important}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,transparent 30%,rgba(2,5,10,.78))}
+.stage{position:relative;z-index:2;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:calc(18px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
+.card{position:relative;width:100%;max-width:440px;border-radius:24px;padding:22px;background:var(--glass);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(0,243,255,.08),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:max-width .55s cubic-bezier(.22,1,.36,1)}
+.card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(140deg,rgba(0,243,255,.62),rgba(0,243,255,.08) 35%,rgba(255,0,234,.08) 65%,rgba(255,0,234,.5));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.card.wide{max-width:1180px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{flex:none;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(0,243,255,.2),rgba(255,0,234,.16));border:1px solid var(--ln);box-shadow:0 0 22px rgba(0,243,255,.25)}
+.logo svg{width:26px;height:26px}
+.brand h1{margin:0;font-size:19px;letter-spacing:-.02em;line-height:1.15}
+.brand p{margin:2px 0 0;font-size:11.5px;color:var(--mut);line-height:1.3}
+.brand .grow{flex:1;min-width:0}
+.icon-btn{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--mut);font-size:19px;cursor:pointer;transition:all .2s}
+.icon-btn:hover{color:var(--cy);border-color:var(--ln);transform:rotate(30deg)}
+.status-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 11px;border-radius:999px;border:1px solid var(--ln);background:rgba(0,243,255,.05);color:var(--tx);font:600 11.5px var(--mono);cursor:pointer;max-width:100%}
+.pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill .dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--am);color:var(--am);box-shadow:0 0 8px currentColor}
+.pill.ok .dot{background:var(--em);color:var(--em)}.pill.bad .dot{background:var(--cr);color:var(--cr)}
+.pill.busy .dot{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25;transform:scale(1.5)}}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes inn{from{opacity:0;transform:translateY(10px)}}
+.scr{display:none}.scr.on{display:block;animation:inn .4s cubic-bezier(.22,1,.36,1)}
+.tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.tabs .slider{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:10px;background:linear-gradient(135deg,rgba(0,243,255,.25),rgba(255,0,234,.18));border:1px solid var(--ln);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.tabs[data-tab=up] .slider{transform:translateX(100%)}
+.tabs button{position:relative;z-index:1;min-height:44px;border:0;background:none;color:var(--mut);font:600 14px var(--sans);cursor:pointer;transition:color .2s}
+.tabs button.on{color:var(--tx)}
+.banner{margin:14px 0 0;padding:10px 12px;border-radius:12px;font-size:13px;border:1px solid rgba(255,238,0,.35);background:rgba(255,238,0,.07);color:#fff6a8}
+.banner.bad{border-color:rgba(255,59,92,.45);background:rgba(255,59,92,.08);color:#ffc2cc}
+.banner.ok{border-color:rgba(0,255,136,.4);background:rgba(0,255,136,.07);color:#b6ffd9}
+.fld{position:relative;margin:14px 0 0}
+.fld .ic{position:absolute;left:14px;top:26px;translate:0 -50%;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--mut);transition:color .2s;pointer-events:none}
+.fld input{width:100%;height:52px;padding:18px 46px 4px 44px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(5,10,18,.6);color:var(--tx);font:16px var(--sans);outline:0;transition:border-color .2s,box-shadow .2s}
+.fld .fl{position:absolute;left:44px;top:26px;translate:0 -50%;color:var(--mut);font-size:14px;pointer-events:none;transition:all .18s ease}
+.fld input:focus+.fl,.fld input:not(:placeholder-shown)+.fl,.fld input:-webkit-autofill+.fl{top:14px;font-size:11px;color:var(--cy)}
+.fld input:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(0,243,255,.14),0 0 22px rgba(0,243,255,.18)}
+.fld:focus-within .ic{color:var(--cy)}
+.fld.ok input{border-color:rgba(0,255,136,.5)}.fld.bad input{border-color:rgba(255,59,92,.6)}
+.fld .eye{position:absolute;right:4px;top:4px;width:44px;height:44px;border:0;background:none;color:var(--mut);cursor:pointer;display:grid;place-items:center}
+.fld .eye svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fld .eye:hover{color:var(--cy)}
+.hint{font-size:12px;color:var(--cr);margin:5px 4px 0;min-height:0}
+.hint:empty{display:none}
+.meter{height:4px;border-radius:4px;background:rgba(255,255,255,.07);margin:8px 2px 0;overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:4px;background:var(--cr);transition:width .3s,background .3s}
+.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;margin-top:18px;padding:0 16px;border-radius:14px;border:1px solid var(--ln);background:rgba(255,255,255,.04);color:var(--tx);font:700 15px var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .25s,filter .2s}
+.btn.primary{background:linear-gradient(135deg,#00f3ff,#19b9d6 55%,#7aa8ff);color:#021218;border-color:transparent;box-shadow:0 8px 28px rgba(0,243,255,.28)}
+.btn.primary:hover{box-shadow:0 10px 36px rgba(0,243,255,.45)}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:scale(.985)}
+.btn[disabled]{opacity:.75;cursor:progress;transform:none}
+.btn .spin{display:none;width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:rot .7s linear infinite}
+.btn.loading .spin{display:inline-block}
+.btn.sm{display:inline-flex;width:auto;min-height:40px;margin:0;padding:0 13px;font-size:13px;border-radius:12px}
+.btn.danger{color:var(--cr);border-color:rgba(255,59,92,.4)}.btn.good{color:var(--em);border-color:rgba(0,255,136,.4)}.btn.warn{color:var(--am);border-color:rgba(255,238,0,.4)}
+.btn.ghost{background:none}
+.err{margin-top:12px;font-size:13px;color:#ffc2cc;background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.4);border-radius:12px;padding:10px 12px}
+.err:empty{display:none}
+.fine{margin:16px 2px 0;font-size:11.5px;color:var(--mut);text-align:center;line-height:1.5}
+.center{text-align:center}
+.big{width:84px;height:84px;margin:6px auto 14px;border-radius:50%;display:grid;place-items:center;font-size:38px;border:1px solid currentColor;position:relative}
+.big::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid currentColor;opacity:.3;animation:ring 2.2s infinite}
+@keyframes ring{0%{transform:scale(.9);opacity:.5}100%{transform:scale(1.35);opacity:0}}
+.big.am{color:var(--am);background:rgba(255,238,0,.07)}.big.cr{color:var(--cr);background:rgba(255,59,92,.08)}.big.cy{color:var(--cy);background:rgba(0,243,255,.07)}
+.scr h2{margin:0 0 6px;font-size:21px;letter-spacing:-.02em}
+.scr p.sub{margin:0 auto;color:var(--mut);font-size:13.5px;max-width:360px}
+.kv{display:grid;gap:8px;margin:18px 0 0;text-align:left}
+.kv div{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);font-size:12.5px}
+.kv span{color:var(--mut)}.kv b{font:600 12px var(--mono);text-align:right;word-break:break-all}
+.lockbox{margin-top:16px;padding:14px;border-radius:14px;text-align:left;font-size:13.5px;line-height:1.55;color:#ffd5db;background:rgba(255,59,92,.09);border:1px solid rgba(255,59,92,.5);box-shadow:0 0 30px rgba(255,59,92,.14)}
+.steps{list-style:none;margin:20px 0 0;padding:0;text-align:left;display:grid;gap:10px}
+.steps li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);color:var(--mut);font-size:13.5px;transition:all .3s}
+.steps li i{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:12px}
+.steps li.act{color:var(--cy);border-color:var(--ln);background:rgba(0,243,255,.06)}
+.steps li.act i{border-right-color:transparent;animation:rot .8s linear infinite}
+.steps li.done{color:var(--em)}.steps li.done i::before{content:"✓"}
+.guide{margin:16px 0 0;padding:0;list-style:none;text-align:left;display:grid;gap:8px;font-size:13px;color:var(--mut)}
+.guide li{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}
+.guide b{color:var(--tx)}
+/* ---------- admin ---------- */
+.ad-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.ad-head h2{margin:0}.ad-head p{margin:2px 0 0;font-size:12.5px;color:var(--mut)}
+.ad-actions{display:flex;flex-wrap:wrap;gap:8px}
+.mode{display:inline-flex;padding:3px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);gap:3px}
+.mode .btn.sm{border:0;background:none;min-height:40px}
+.mode .btn.sm.on{background:linear-gradient(135deg,rgba(0,243,255,.28),rgba(255,0,234,.2));border:1px solid var(--ln)}
+.mode .btn.sm.go{background:linear-gradient(135deg,#00f3ff,#19b9d6);color:#021218}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.kpi{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden}
+.kpi small{display:block;font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.kpi b{display:block;font-size:30px;line-height:1.2;letter-spacing:-.03em;margin-top:4px}
+.kpi.pend b{color:var(--am)}.kpi.act b{color:var(--em)}.kpi.sus b{color:var(--cr)}.kpi.tot b{color:var(--cy)}
+.kpi.pulse{border-color:rgba(255,238,0,.5);animation:glowA 1.6s infinite}
+.kpi.alert{border-color:rgba(255,59,92,.5)}
+@keyframes glowA{50%{box-shadow:0 0 24px rgba(255,238,0,.3)}}
+.ad-tabs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.ad-tabs .sp{flex:1}
+.ad-tabs input{height:40px;min-width:180px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(5,10,18,.6);color:var(--tx);font:14px var(--sans);outline:0}
+.ad-tabs input:focus{border-color:var(--cy)}
+.chip{min-height:40px;padding:0 13px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--mut);font:600 13px var(--sans);cursor:pointer}
+.chip.on{color:var(--tx);border-color:var(--ln);background:rgba(0,243,255,.12)}
+.twrap{overflow-x:auto;border-radius:16px;border:1px solid rgba(255,255,255,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{position:sticky;top:0;text-align:left;padding:11px 12px;font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);background:rgba(5,10,18,.9);border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap}
+.tbl td{padding:12px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.05)}
+.tbl tr:hover td{background:rgba(0,243,255,.03)}
+.tbl .nm{font-weight:700}.tbl .sm{font-size:12px;color:var(--mut)}
+.mono{font-family:var(--mono);font-size:12px}
+.bdg{display:inline-block;padding:3px 9px;border-radius:999px;font:700 10.5px var(--mono);letter-spacing:.04em;white-space:nowrap;border:1px solid currentColor}
+.bdg.red{color:var(--cr);background:rgba(255,59,92,.1)}.bdg.green{color:var(--em);background:rgba(0,255,136,.09)}
+.bdg.amber{color:var(--am);background:rgba(255,238,0,.09)}.bdg.cyan{color:var(--cy);background:rgba(0,243,255,.09)}.bdg.mag{color:var(--mg);background:rgba(255,0,234,.09)}
+.chipd{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:8px;font-size:11px;color:var(--mut);background:rgba(255,255,255,.06)}
+.acts{display:flex;flex-wrap:wrap;gap:6px}
+.acts .btn.sm{min-height:36px;padding:0 10px;font-size:12px}
+.empty{padding:34px 12px;text-align:center;color:var(--mut)}
+.maps{color:var(--cy)}
+@media(max-width:900px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .twrap{border:0;overflow:visible}
+  .tbl thead{display:none}.tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tr{margin:10px 0;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.03)}
+  .tbl td{padding:6px 0;border:0}
+  .tbl td::before{content:attr(data-l);display:block;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:2px}
+  .ad-tabs input{flex:1 1 100%}
+}
+/* ---------- overlays ---------- */
+#modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,5,10,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#modal.on{display:flex;animation:inn .25s}
+.mbox{width:100%;max-width:440px;max-height:90vh;overflow:auto;padding:20px;border-radius:20px;background:rgba(8,15,26,.95);border:1px solid var(--ln);box-shadow:0 0 50px rgba(0,243,255,.18)}
+.mbox h3{margin:0 0 6px;font-size:17px}.mbox p{margin:0;color:var(--mut);font-size:13.5px}
+.mbox .row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.mbox .row .btn{flex:1;margin:0}
+.mbox input{width:100%;height:48px;margin-top:12px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(5,10,18,.7);color:var(--tx);font:14px var(--mono);outline:0}
+.mbox input:focus{border-color:var(--cy)}
+#toasts{position:fixed;z-index:60;left:50%;translate:-50% 0;bottom:calc(18px + env(safe-area-inset-bottom));display:grid;gap:8px;width:min(92vw,420px);pointer-events:none}
+.toast{padding:12px 14px;border-radius:14px;font-size:13.5px;background:rgba(8,15,26,.95);border:1px solid var(--ln);box-shadow:0 8px 30px rgba(0,0,0,.5);animation:inn .3s}
+.toast.bad{border-color:rgba(255,59,92,.6)}.toast.ok{border-color:rgba(0,255,136,.55)}.toast.out{opacity:0;transition:opacity .3s}
+@media(max-width:420px){.card{padding:18px;border-radius:20px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 13h3"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+</defs></svg>
+
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="vig"></div>
+
+<main class="stage">
+  <div class="card" id="card">
+    <header class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="#00f3ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h8v-8h8V8h8"/><circle cx="4" cy="22" r="2" fill="#00f3ff"/><circle cx="28" cy="8" r="2" fill="#ff00ea" stroke="#ff00ea"/><path d="M16 4v6M13 7h6" stroke="#ff00ea"/></svg>
+      </div>
+      <div class="grow"><h1>DPNG Job Card</h1><p>Engineering &amp; PNG Conversion Suite · Navonmesh Solutions</p></div>
+      <button class="icon-btn" id="gear" aria-label="Backend settings" title="Backend settings">⚙</button>
+    </header>
+
+    <div class="status-row">
+      <button class="pill busy" id="hwPill" type="button" title="Hardware lock identifier"><i class="dot"></i><span id="hwTxt">HW-ID: computing…</span></button>
+      <button class="pill busy" id="gpsPill" type="button" title="Tap to verify GPS"><i class="dot"></i><span id="gpsTxt">📡 Acquiring Satellite Lock...</span></button>
+    </div>
+
+    <!-- ========== AUTH ========== -->
+    <section class="scr on" data-s="auth">
+      <div class="tabs" id="tabs" data-tab="in" role="tablist">
+        <i class="slider"></i>
+        <button type="button" data-t="in" class="on" role="tab">Sign In</button>
+        <button type="button" data-t="up" role="tab">Request Access</button>
+      </div>
+      <div id="banner"></div>
+
+      <form id="fIn" novalidate>
+        <div class="fld" id="gInE"><svg class="ic"><use href="#i-mail"/></svg><input id="inEmail" type="email" inputmode="email" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder=" " required><label class="fl" for="inEmail">Email Address</label></div>
+        <div class="hint" id="hInE"></div>
+        <div class="fld" id="gInP"><svg class="ic"><use href="#i-lock"/></svg><input id="inPw" type="password" autocomplete="current-password" placeholder=" " required><label class="fl" for="inPw">Password</label><button class="eye" type="button" data-eye="inPw" aria-label="Show password"><svg><use href="#i-eye"/></svg></button></div>
+        <div class="err" id="eIn" role="alert"></div>
+        <button class="btn primary" id="bIn" type="submit"><span class="spin"></span><span class="lbl">Sign In</span></button>
+      </form>
+
+      <form id="fUp" novalidate hidden>
+        <div class="fld" id="gUpN"><svg class="ic"><use href="#i-user"/></svg><input id="upName" type="text" autocomplete="name" placeholder=" " required><label class="fl" for="upName">Full Name</label></div>
+        <div class="hint" id="hUpN"></div>
+        <div class="fld" id="gUpE"><svg class="ic"><use href="#i-mail"/></svg><input id="upEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder=" " required><label class="fl" for="upEmail">Email Address</label></div>
+        <div class="hint" id="hUpE"></div>
+        <div class="fld" id="gUpM"><svg class="ic"><use href="#i-id"/></svg><input id="upPhone" type="text" autocomplete="tel" placeholder=" " required><label class="fl" for="upPhone">Mobile / Employee ID</label></div>
+        <div class="hint" id="hUpM"></div>
+        <div class="fld" id="gUpP"><svg class="ic"><use href="#i-lock"/></svg><input id="upPw" type="password" autocomplete="new-password" placeholder=" " required><label class="fl" for="upPw">Create Password</label><button class="eye" type="button" data-eye="upPw" aria-label="Show password"><svg><use href="#i-eye"/></svg></button></div>
+        <div class="meter"><i id="meter"></i></div>
+        <div class="hint" id="hUpP"></div>
+        <div class="err" id="eUp" role="alert"></div>
+        <button class="btn primary" id="bUp" type="submit"><span class="spin"></span><span class="lbl">Request Access</span></button>
+      </form>
+      <button class="btn ghost" id="setLnk" type="button" hidden>🔑 First-time admin setup</button>
+      <form id="fSet" novalidate hidden>
+        <div class="fld"><svg class="ic"><use href="#i-mail"/></svg><input id="setEmail" type="email" inputmode="email" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder=" " required><label class="fl" for="setEmail">Admin Email</label></div>
+        <div class="fld"><svg class="ic"><use href="#i-lock"/></svg><input id="setPw" type="password" autocomplete="new-password" placeholder=" " required><label class="fl" for="setPw">Admin Password (4+ characters)</label><button class="eye" type="button" data-eye="setPw" aria-label="Show password"><svg><use href="#i-eye"/></svg></button></div>
+        <div class="fld"><svg class="ic"><use href="#i-id"/></svg><input id="setCode" type="password" autocomplete="off" placeholder=" " required><label class="fl" for="setCode">Admin Setup Code</label></div>
+        <div class="err" id="eSet" role="alert"></div>
+        <button class="btn primary" id="bSet" type="submit"><span class="spin"></span><span class="lbl">Create Admin</span></button>
+      </form>
+      <p class="fine">🔐 This ID will be bound to <b>this device</b>. Location and hardware telemetry are logged for every access attempt.</p>
+    </section>
+
+    <!-- ========== PENDING ========== -->
+    <section class="scr center" data-s="pending">
+      <div class="big am">⏳</div>
+      <h2>Awaiting Admin Approval</h2>
+      <p class="sub">Your access request has been recorded. You can sign in as soon as the administrator approves this account.</p>
+      <div class="kv">
+        <div><span>Reference ID</span><b id="pRef">—</b></div>
+        <div><span>Registered Device</span><b id="pDev">—</b></div>
+        <div><span>Hardware ID</span><b id="pHw">—</b></div>
+      </div>
+      <button class="btn" id="pBack" type="button">← Back to Sign In</button>
+    </section>
+
+    <!-- ========== DEVICE LOCK ========== -->
+    <section class="scr center" data-s="locked">
+      <div class="big cr">🛡️</div>
+      <h2>Device Security Lock</h2>
+      <div class="lockbox" id="lockMsg">Security Lock: This ID is bound to another registered device. This unauthorized attempt and your current location have been logged and reported to the Administrator.</div>
+      <div class="kv">
+        <div><span>Event</span><b>DEVICE_LOCKED_MISMATCH</b></div>
+        <div><span>This Device</span><b id="lkDev">—</b></div>
+        <div><span>Logged Location</span><b id="lkLoc">—</b></div>
+      </div>
+      <button class="btn" id="lkBack" type="button">← Back to Sign In</button>
+    </section>
+
+    <!-- ========== BLOCKED ========== -->
+    <section class="scr center" data-s="blocked">
+      <div class="big cr">⛔</div>
+      <h2>Access Blocked</h2>
+      <p class="sub">This account has been blocked by the Administrator. Contact Navonmesh Solutions if you believe this is a mistake.</p>
+      <button class="btn" id="blBack" type="button">← Back to Sign In</button>
+    </section>
+
+    <!-- ========== LOCATION REQUIRED ========== -->
+    <section class="scr center" data-s="geo">
+      <div class="big cy">📍</div>
+      <h2>Location Verification Required</h2>
+      <p class="sub">For the security audit, DPNG Job Card can only unlock after high-accuracy GPS is verified on this device.</p>
+      <ul class="guide">
+        <li><b>Android / Chrome:</b> tap the 🔒 icon beside the address → Permissions → Location → Allow.</li>
+        <li><b>iPhone / Safari:</b> Settings → Privacy &amp; Security → Location Services → Safari Websites → While Using.</li>
+        <li><b>Desktop:</b> click the 🔒 icon in the address bar → Site settings → Location → Allow.</li>
+      </ul>
+      <button class="btn primary" id="geoRetry" type="button"><span class="spin"></span><span class="lbl">Verify Location &amp; Retry</span></button>
+      <button class="btn ghost" id="geoBack" type="button">← Back</button>
+    </section>
+
+    <!-- ========== LAUNCH ========== -->
+    <section class="scr center" data-s="launch">
+      <div class="big cy">🔐</div>
+      <h2 id="lnTitle">Unlocking DPNG Studio</h2>
+      <p class="sub" id="lnSub">Zero-trust verification in progress…</p>
+      <ul class="steps" id="lnSteps">
+        <li><i></i>Verifying session token</li>
+        <li><i></i>Confirming hardware lock</li>
+        <li><i></i>Decrypting DPNG Studio</li>
+      </ul>
+    </section>
+
+    <!-- ========== ADMIN ========== -->
+    <section class="scr" data-s="admin">
+      <div class="ad-head">
+        <div><h2>Command Center</h2><p id="adWho">—</p></div>
+        <div class="ad-actions">
+          <div class="mode"><button class="btn sm on" type="button" id="adCon">🛡️ Admin Security Console</button><button class="btn sm go" type="button" id="adLaunch">🚀 Launch DPNG Job Card Studio</button></div>
+          <button class="btn sm" type="button" id="adOut">🔒 Logout</button>
+        </div>
+      </div>
+      <div class="kpis" id="adKpi"></div>
+      <div class="ad-tabs">
+        <button class="chip on" type="button" data-at="users">👥 Users &amp; Devices</button>
+        <button class="chip" type="button" data-at="logs">📍 Security &amp; Geolocation Audit</button>
+        <span class="sp"></span>
+        <input id="adQ" type="search" placeholder="Search…" autocomplete="off">
+        <button class="btn sm" type="button" id="adRef" title="Refresh">↻ Refresh</button>
+      </div>
+      <div class="ad-tabs" id="adChips" hidden>
+        <button class="chip on" type="button" data-f="all">All Events</button>
+        <button class="chip" type="button" data-f="bad">🚨 Unauthorized / Multi-Device Attempts</button>
+        <button class="chip" type="button" data-f="ok">✅ Authorized App Access</button>
+        <button class="chip" type="button" data-f="pend">⏳ Pending Sign-Ups</button>
+      </div>
+      <div id="adBody"></div>
+    </section>
+
+    <p class="fine" id="foot">© Navonmesh Solutions · Zero-trust access control</p>
+  </div>
+</main>
+<div id="modal"></div>
+<div id="toasts" aria-live="polite"></div>
+
 <script>
-(()=>{
-const URL0='https://script.google.com/macros/s/AKfycbwJD4ojzPM34gunnrlzPYtUU9z9jaF02AMX0z7flWYBC-XqXkdFTmn2_XIhiRq1fE6v/exec',ADM='shubhampaswan567@gmail.com',$=s=>document.querySelector(s);
-let DV=null,SE=null;
-/* bring back sign-in, device id and cached app from IndexedDB if the phone cleared its normal storage */
-const idbAll=()=>new Promise(res=>{try{const r=indexedDB.open('dpng_offline',1);r.onupgradeneeded=()=>{const x=r.result;if(!x.objectStoreNames.contains('kv'))x.createObjectStore('kv');if(!x.objectStoreNames.contains('q'))x.createObjectStore('q',{keyPath:'key'})};
- r.onsuccess=()=>{const x=r.result,m={};try{const t=x.transaction('kv','readonly'),c=t.objectStore('kv').openCursor();c.onsuccess=()=>{const z=c.result;if(z){m[z.key]=z.value;z.continue()}};t.oncomplete=()=>res(m);t.onerror=t.onabort=()=>res({})}catch(e){res({})}};r.onerror=r.onblocked=()=>res({})}catch(e){res({})}});
-const idbSet=(k,v)=>{try{const r=indexedDB.open('dpng_offline',1);r.onsuccess=()=>{try{r.result.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}}catch(e){}};
-async function restore(){let m={};try{m=await idbAll()}catch(e){}
- for(const k of['dpng_sess','dpng_app']){try{if(localStorage.getItem(k)==null&&m[k]!=null)localStorage.setItem(k,m[k])}catch(e){}}
- let d=localStorage.getItem('dpng_dev')||m.dpng_dev;if(!d){d='d'+Math.random().toString(36).slice(2)+Date.now().toString(36)}
- try{localStorage.setItem('dpng_dev',d)}catch(e){}if(m.dpng_dev!==d)idbSet('dpng_dev',d);DV=d;
- try{SE=JSON.parse(localStorage.getItem('dpng_sess')||'null')}catch(e){}
- if(SE)document.documentElement.className='in'}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-const isMail=e=>/^[a-z0-9](?:[a-z0-9._%+-]{0,62}[a-z0-9])?@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/.test(e)&&!/\.\./.test(e)&&e.split('@')[1].split('.').pop().length>=2;
-const api=async(o,ms)=>{const ac=new AbortController(),t=setTimeout(()=>ac.abort(),ms||25000);
- try{return await(await fetch(URL0,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(Object.assign({device:DV},o)),signal:ac.signal})).json()}finally{clearTimeout(t)}};
-const btns=['#go','#rg','#st'];
-function busy(t){btns.forEach(b=>$(b).disabled=true);$('#m').className='bz';$('#m').innerHTML='<span class="sp"></span>'+t}
-function free(t,c){document.documentElement.className='';btns.forEach(b=>$(b).disabled=false);$('#m').className=c||'';$('#m').textContent=t||''}
-function run(h){window.DPNG_LOADER=1;window.DPNG_ADMIN_READY=ADMIN_READY;window.DPNG_URL=URL0;document.open();document.write(h);document.close()}
-let ADMIN_READY=false;
-function am(m){if(m==='a'&&ADMIN_READY){free('Admin is already set up. Sign in with your admin email.','');return}$('#tu').className=m==='u'?'on':'';$('#ta').className=m==='a'?'on':'';$('#rg').hidden=$('#nl').hidden=m==='a';$('#sl').hidden=$('#st').hidden=m!=='a';$('#em').value='';$('#em').placeholder=m==='a'?'Admin email':'your@email.com'}
-$('#tu').onclick=()=>am('u');$('#ta').onclick=()=>am('a');
-async function load(){busy('Loading the app... first time can take a few seconds');
- const c=localStorage.getItem('dpng_app');if(c&&!navigator.onLine){run(c);return}
- try{const r=await api({action:'app',token:SE.token},40000);
-  if(!r.ok){if(r.code==='DENIED'){SE=null;localStorage.removeItem('dpng_sess');free(r.err||'Please sign in again');return}if(c){run(c);return}free(r.err||'Could not load the app. Please try again.');return}
-  try{localStorage.setItem('dpng_app',r.html)}catch(e){}run(r.html)}
- catch(e){if(c){run(c);return}free('Cannot reach the server. Check your internet and try again.')}}
-async function sub(act){const em=$('#em').value.trim().toLowerCase(),pw=$('#pw').value;
- if(!isMail(em)){free('Enter a real email address, for example name@gmail.com');return}
- if(pw.length<4){free('Password must be 4+ characters');return}
- if(!navigator.onLine){free('You are offline. Signing in or registering the first time needs internet.');return}
- busy(act==='login'?'Signing in...':act==='register'?'Registering...':'Setting up admin...');
- try{const r=await api({action:act,email:em,password:pw,name:$('#nm').value.trim(),setup:$('#sc').value});
-  if(!r.ok){free(r.err||'Failed');return}
-  if(act==='login'){SE={email:em,name:r.name,role:r.role,token:r.token,chk:Date.now()};localStorage.setItem('dpng_sess',JSON.stringify(SE));load()}
-  else free(act==='register'?'Registered. Ask the admin to activate you, then sign in.':'Admin created. Now sign in.','ok')}
- catch(e){free('Cannot reach the server. Check your internet.')}}
-$('#go').onclick=()=>sub('login');$('#rg').onclick=()=>sub('register');$('#st').onclick=()=>sub('adminSetup');
-function start(){if(!SE)return;const c=localStorage.getItem('dpng_app');
- if(c){if(navigator.onLine)api({action:'app',token:SE.token},60000).then(r=>{if(r&&r.ok)localStorage.setItem('dpng_app',r.html)}).catch(()=>{});run(c)}
- else load()}
-(async()=>{await restore();
- if(SE)$('#ws').textContent='Welcome back, '+(SE.name||SE.email);
- setTimeout(()=>{$('#wl').classList.add('out');setTimeout(()=>$('#wl').style.display='none',520)},SE?400:1300);
- try{const r=await api({action:'status'},8000);if(r&&r.ok&&r.adminReady){ADMIN_READY=true;$('#ta').hidden=true;$('#st').hidden=true;$('#sl').hidden=true}}catch(e){}})();
-window.addEventListener('load',()=>setTimeout(async()=>{await restore();start()},0));
+/* Wrapped in an IIFE so no top-level identifiers leak into the page that is later injected via document.write(). */
+(() => {
+'use strict';
+
+/* ============================================================================
+ * CONFIG
+ * ========================================================================== */
+
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwJD4ojzPM34gunnrlzPYtUU9z9jaF02AMX0z7flWYBC-XqXkdFTmn2_XIhiRq1fE6v/exec',
+  ADMIN_EMAIL: 'shubhampaswan567@gmail.com',
+  HEARTBEAT_MS: 180000,     // 3 minutes
+  OFFLINE_GRACE_H: 72       // encrypted offline cache may boot without server contact for this long
+};
+const K = { url: 'dpng_script_url', uid: 'dpng_hw_uid', sess: 'dpng_sess', cache: 'dpng_app_enc', msg: 'dpng_msg', last: 'dpng_last_email', pill: 'dpng_pill_min', dev: 'dpng_dev', prefs: 'dpng_prefs' };
+
+/* ============================================================================
+ * UTILITIES
+ * ========================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const enc = new TextEncoder();
+const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+const sha256 = async s => hex(await crypto.subtle.digest('SHA-256', enc.encode(s)));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch { /* ignore */ } }
+};
+const getUrl = () => (store.get(K.url) || CONFIG.SCRIPT_URL || '').trim();
+const toB64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const fromB64 = b => Uint8Array.from(atob(b), c => c.charCodeAt(0));
+const ist = iso => { try { return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date(iso)) + ' IST'; } catch { return String(iso || ''); } };
+const ago = iso => { if (!iso) return 'never'; const s = (Date.now() - new Date(iso).getTime()) / 1000; if (!(s >= 0)) return 'just now'; if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; };
+
+function toast(msg, kind = 'info', ms = 3400) {
+  const d = document.createElement('div');
+  d.className = 'toast ' + kind; d.textContent = msg;
+  const tw = $('#toasts'); if (!tw) return; tw.appendChild(d);
+  setTimeout(() => { d.classList.add('out'); setTimeout(() => d.remove(), 320); }, ms);
+}
+
+
+/* ============================================================================
+ * SESSION STATE
+ * ========================================================================== */
+
+let SESS = null;
+try { SESS = JSON.parse(store.get(K.sess) || 'null'); } catch { SESS = null; }
+let KEY = null, FP = null, HB = 0, ADT = 0, PENDING_LOGIN = null, ADMIN_READY = null;
+/* app.html keeps its own IndexedDB ('dpng_offline'); on logout we must also wipe the mirrored session/plaintext copies there */
+function offOpen() {
+  return new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('dpng_offline', 1);
+      r.onupgradeneeded = () => { const x = r.result; if (!x.objectStoreNames.contains('kv')) x.createObjectStore('kv'); if (!x.objectStoreNames.contains('q')) x.createObjectStore('q', { keyPath: 'key' }); };
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('blocked'));
+    } catch (e) { rej(e); }
+  });
+}
+async function offOp(fn) {
+  try {
+    const db = await offOpen();
+    await new Promise(res => {
+      try { const tx = db.transaction('kv', 'readwrite'); fn(tx.objectStore('kv')); tx.oncomplete = () => { res(); db.close(); }; tx.onerror = tx.onabort = () => { res(); db.close(); }; }
+      catch (e) { res(); db.close(); }
+    });
+  } catch { /* ignore */ }
+}
+const offSet = (k, v) => offOp(s => s.put(v, k));
+const offDel = k => offOp(s => s.delete(k));
+const saveSess = () => {
+  if (!SESS) { store.del(K.sess); return; }
+  let c = null; try { c = JSON.parse(store.get(K.sess) || 'null'); } catch { c = null; }
+  store.set(K.sess, JSON.stringify(Object.assign({}, c && c.email === SESS.email ? c : {}, SESS, { chk: Date.now() })));
+};
+const clearSess = () => { SESS = null; KEY = null; [K.sess, K.cache, 'dpng_app'].forEach(k => store.del(k)); offDel('dpng_sess'); offDel('dpng_app'); };
+
+/* ============================================================================
+ * DEVICE FINGERPRINT
+ * ========================================================================== */
+function idbOpen() {
+  return new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('dpng_hw', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+}
+async function idbGet(k) {
+  try {
+    const db = await idbOpen();
+    return await new Promise(res => {
+      const g = db.transaction('kv').objectStore('kv').get(k);
+      g.onsuccess = () => { res(g.result ?? null); db.close(); };
+      g.onerror = () => { res(null); db.close(); };
+    });
+  } catch { return null; }
+}
+async function idbSet(k, v) {
+  try {
+    const db = await idbOpen();
+    await new Promise(res => {
+      const tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(v, k);
+      tx.oncomplete = () => { res(); db.close(); };
+      tx.onerror = tx.onabort = () => { res(); db.close(); };
+    });
+  } catch { /* ignore */ }
+}
+async function installUid() {
+  const ls = store.get(K.uid);
+  const ix = await idbGet('uid');
+  let uid = ix || ls;
+  if (!uid) uid = (crypto.randomUUID ? crypto.randomUUID() : hex(crypto.getRandomValues(new Uint8Array(16))));
+  if (ls !== uid) store.set(K.uid, uid);
+  if (ix !== uid) await idbSet('uid', uid);
+  return uid;
+}
+function canvasSig() {
+  try {
+    const c = document.createElement('canvas'); c.width = 240; c.height = 60;
+    const x = c.getContext('2d');
+    x.textBaseline = 'top'; x.font = "14px 'Arial'"; x.fillStyle = '#f60'; x.fillRect(100, 1, 62, 20);
+    x.fillStyle = '#069'; x.fillText('DPNG Job Card ⌖ Navonmesh 0123', 2, 15);
+    x.fillStyle = 'rgba(102,204,0,.7)'; x.font = '18px serif'; x.fillText('Ø32*20 ∠', 4, 32);
+    x.globalCompositeOperation = 'multiply'; x.fillStyle = 'rgb(255,0,255)'; x.beginPath(); x.arc(50, 30, 20, 0, Math.PI * 2); x.fill();
+    return c.toDataURL();
+  } catch { return 'na'; }
+}
+function gpuSig() {
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (!gl) return { vendor: 'na', renderer: 'na' };
+    const e = gl.getExtension('WEBGL_debug_renderer_info');
+    return { vendor: String(e ? gl.getParameter(e.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR)), renderer: String(e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) };
+  } catch { return { vendor: 'na', renderer: 'na' }; }
+}
+function parseEnv() {
+  const ua = navigator.userAgent;
+  let os = 'Unknown OS', br = 'Unknown';
+  const and = ua.match(/Android (\d+)/);
+  if (/Windows NT 10/.test(ua)) os = 'Windows 10/11'; else if (/Windows/.test(ua)) os = 'Windows';
+  else if (and) os = 'Android ' + and[1]; else if (/Android/.test(ua)) os = 'Android';
+  else if (/iPhone|iPad|iPod/.test(ua)) os = 'iOS'; else if (/Mac OS X/.test(ua)) os = 'macOS';
+  else if (/CrOS/.test(ua)) os = 'ChromeOS'; else if (/Linux/.test(ua)) os = 'Linux';
+  if (/Edg\//.test(ua)) br = 'Edge'; else if (/OPR\//.test(ua)) br = 'Opera'; else if (/SamsungBrowser/.test(ua)) br = 'Samsung Internet';
+  else if (/Firefox\//.test(ua)) br = 'Firefox'; else if (/CriOS|Chrome\//.test(ua)) br = 'Chrome'; else if (/Safari\//.test(ua)) br = 'Safari';
+  return { os, br, fam: os.replace(/\s*\d.*$/, '') };
+}
+/* Stable signals only go into the hash (OS/browser *family*, orientation-independent screen size, no devicePixelRatio) so that
+   browser auto-updates, screen rotation and page zoom never lock a legitimate engineer out. */
+async function getDeviceFingerprint() {
+  const uid = await installUid();
+  const g = gpuSig(), env = parseEnv(), s = screen;
+  const dims = [s.width || 0, s.height || 0].sort((a, b) => a - b);
+  const signals = {
+    uid, canvas: await sha256(canvasSig()), gpuV: g.vendor, gpuR: g.renderer, w: dims[0], h: dims[1], cd: s.colorDepth || 0,
+    cores: navigator.hardwareConcurrency || 0, mem: navigator.deviceMemory || 0,
+    tz: (Intl.DateTimeFormat().resolvedOptions().timeZone) || '', plat: navigator.platform || '', os: env.fam, br: env.br
+  };
+  const deviceId = await sha256('DPNG-HW1|' + Object.keys(signals).sort().map(k => k + '=' + signals[k]).join('|'));
+  const meta = {
+    os: env.os, browser: env.br, gpu: g.renderer.slice(0, 90),
+    screen: `${s.width}×${s.height} @${(window.devicePixelRatio || 1).toFixed(2)}x`,
+    platform: navigator.platform || '', cores: String(navigator.hardwareConcurrency || ''), mem: String(navigator.deviceMemory || ''),
+    tz: signals.tz
+  };
+  return { deviceId, meta };
+}
+const fpP = () => FP || (FP = getDeviceFingerprint());
+const fmtHw = id => 'HW-ID: ' + id.slice(0, 4).toUpperCase() + '••••' + id.slice(-4).toUpperCase() + ' · Locked';
+
+
+/* ============================================================================
+ * GEOLOCATION + IP TELEMETRY
+ * ========================================================================== */
+function setGps(state, text) { const p = $('#gpsPill'); if (!p) return; p.className = 'pill ' + state; $('#gpsTxt').textContent = text; }
+function getGps(timeout = 10000) {
+  return new Promise(res => {
+    if (!navigator.geolocation) return res({ ok: false, error: 'UNSUPPORTED' });
+    navigator.geolocation.getCurrentPosition(
+      p => res({ ok: true, lat: +p.coords.latitude.toFixed(6), lon: +p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy) }),
+      e => res({ ok: false, error: e.code === 1 ? 'DENIED' : e.code === 2 ? 'UNAVAILABLE' : 'TIMEOUT' }),
+      { enableHighAccuracy: true, timeout, maximumAge: 0 });
+  });
+}
+const RG = new Map();
+async function reverseGeocode(lat, lon) {
+  const k = lat.toFixed(3) + ',' + lon.toFixed(3);
+  if (RG.has(k)) return RG.get(k);
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=18&lat=${lat}&lon=${lon}`, { signal: ctl.signal, headers: { Accept: 'application/json' } });
+    const j = await r.json(); const a = String(j.display_name || '');
+    if (a) RG.set(k, a);
+    return a;
+  } catch { return ''; } finally { clearTimeout(t); }
+}
+let IPC = null;
+async function getIpInfo() {
+  if (IPC && Date.now() - IPC.t < 120000) return IPC.v;
+  const f = async (url, mapFn) => {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+    try { const r = await fetch(url, { signal: ctl.signal }); const j = await r.json(); return mapFn(j); } catch { return null; } finally { clearTimeout(t); }
+  };
+  let v = await f('https://ipwho.is/', j => j && j.success !== false && j.ip ? ({ ip: j.ip, city: j.city || '', region: j.region || '', country: j.country || '', isp: (j.connection && (j.connection.isp || j.connection.org)) || '', lat: j.latitude, lon: j.longitude }) : null);
+  if (!v) v = await f('https://ipapi.co/json/', j => j && j.ip && !j.error ? ({ ip: j.ip, city: j.city || '', region: j.region || '', country: j.country_name || '', isp: j.org || '', lat: j.latitude, lon: j.longitude }) : null);
+  v = v || {};
+  IPC = { t: Date.now(), v };
+  return v;
+}
+async function collectTelemetry() {
+  setGps('busy', '📡 Acquiring Satellite Lock...');
+  const [gps, ip] = await Promise.all([getGps(), getIpInfo()]);
+  let g = null;
+  if (gps.ok) {
+    setGps('ok', `📍 GPS Verified ±${gps.acc}m`);
+    g = { lat: gps.lat, lon: gps.lon, acc: gps.acc, address: await reverseGeocode(gps.lat, gps.lon) };
+  } else setGps('bad', gps.error === 'DENIED' ? '📍 Location denied — tap to retry' : '📡 GPS unavailable — IP fallback');
+  return { gps: g, gpsError: gps.ok ? '' : gps.error, ip };
+}
+async function primeGeo() {
+  const idle = () => setGps('', '📍 Tap to verify location');
+  try {
+    const p = navigator.permissions && await navigator.permissions.query({ name: 'geolocation' });
+    if (p) {
+      const apply = () => {
+        if (p.state === 'granted') refreshGps();
+        else if (p.state === 'denied') setGps('bad', '📍 Location blocked — enable in browser');
+        else idle();
+      };
+      apply(); p.onchange = apply; return;
+    }
+  } catch { /* fall through */ }
+  idle();
+}
+async function refreshGps() {
+  setGps('busy', '📡 Acquiring Satellite Lock...');
+  const g = await getGps();
+  if (g.ok) setGps('ok', `📍 GPS Verified ±${g.acc}m`);
+  else setGps('bad', g.error === 'DENIED' ? '📍 Location denied — enable in browser' : '📡 GPS unavailable');
+  return g;
+}
+
+
+/* ============================================================================
+ * BACKEND API (DPNG Apps Script)
+ * ========================================================================== */
+
+const em = r => (r && (r.err || r.message)) || 'Failed.';
+const isNet = r => !!r && r.code === 'NETWORK';
+const denied = r => !!r && r.code === 'DENIED';
+function classify(r) {
+  const t = String((r && r.code) || '') + ' ' + em(r);
+  if (/PENDING|awaiting|not\s+(yet\s+)?(approved|activated|active)|inactive|approval|activate you/i.test(t)) return 'pending';
+  if (/block/i.test(t)) return 'blocked';
+  if (/device|another (phone|laptop|mobile)|bound|locked/i.test(t)) return 'locked';
+  return 'other';
+}
+const kindCode = k => ({ pending: 'NOT_APPROVED', blocked: 'BLOCKED', locked: 'DEVICE_LOCKED_MISMATCH' }[k] || 'SESSION_ENDED');
+/* Same wire format the DPNG Apps Script backend already understands: {action, device, token, ...} as text/plain POST */
+async function api(action, extra = {}, ms = 45000) {
+  const fp = await fpP(), url = getUrl();
+  if (!url) return { ok: false, code: 'NO_BACKEND', err: 'Backend URL not set. Tap ⚙ to configure.' };
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+  try {
+    const body = Object.assign({ action, device: fp.deviceId }, SESS && SESS.token ? { token: SESS.token } : {}, extra);
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body), signal: ctl.signal });
+    const txt = await r.text();
+    try { return JSON.parse(txt); } catch { return { ok: false, code: 'BAD_RESPONSE', err: 'Backend returned an invalid response. Check that the Web App is deployed with access = Anyone.' }; }
+  } catch (e) {
+    return { ok: false, code: 'NETWORK', err: e && e.name === 'AbortError' ? 'Request timed out.' : 'Network unreachable.' };
+  } finally { clearTimeout(t); }
+}
+
+/* ============================================================================
+ * ENCRYPTED OFFLINE CACHE (AES-GCM, keyed by session token + hardware id)
+ * ========================================================================== */
+async function getKey() {
+  if (KEY) return KEY;
+  const fp = await fpP();
+  const base = await crypto.subtle.importKey('raw', enc.encode(SESS.token + '|' + fp.deviceId), 'PBKDF2', false, ['deriveKey']);
+  KEY = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: enc.encode('DPNG-CACHE-v1|' + fp.deviceId), iterations: 120000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  return KEY;
+}
+async function cacheStore(html) {
+  const key = await getKey(), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(html)));
+  const ok = store.set(K.cache, JSON.stringify({ v: 1, iv: toB64(iv), ct: toB64(ct), t: Date.now() })); if (!ok) toast('Offline cache could not be saved (storage full).', 'bad'); return ok;
+}
+async function cacheLoad() {
+  try {
+    const raw = store.get(K.cache); if (!raw) return null;
+    const o = JSON.parse(raw), key = await getKey();
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(o.iv) }, key, fromB64(o.ct));
+    return new TextDecoder().decode(pt);
+  } catch { store.del(K.cache); return null; }
+}
+
+
+/* ============================================================================
+ * SCREEN + FORM HELPERS
+ * ========================================================================== */
+function show(name) {
+  $$('.scr').forEach(s => s.classList.toggle('on', s.dataset.s === name));
+  $('#card').classList.toggle('wide', name === 'admin');
+  if (name !== 'admin') stopAdminTimer();
+  window.scrollTo(0, 0);
+}
+function setBanner(msg, kind = '') { $('#banner').innerHTML = msg ? `<div class="banner ${kind}">${esc(msg)}</div>` : ''; }
+function setBtn(b, label, loading = true) { b.disabled = loading; b.classList.toggle('loading', loading); $('.lbl', b).textContent = label; }
+function switchTab(t) { $('#tabs').dataset.tab = t; $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t)); $('#fIn').hidden = t !== 'in'; $('#fUp').hidden = t !== 'up'; $('#fSet').hidden = true; }
+const V = {
+  email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()),
+  name: v => v.trim().length >= 2,
+  phone: v => /^[A-Za-z0-9\-\/ +]{4,24}$/.test(v.trim()),
+  pw: v => v.length >= 8 && /[a-z]/.test(v) && /[A-Z]/.test(v) && /\d/.test(v)
+};
+function mark(grp, hint, ok, msg) {
+  const g = $('#' + grp); g.classList.toggle('ok', ok === true); g.classList.toggle('bad', ok === false);
+  $('#' + hint).textContent = ok === false ? msg : '';
+}
+
+
+/* ============================================================================
+ * AUTH FLOWS
+ * ========================================================================== */
+
+async function collectBoth() { return collectTelemetry(); }
+function showPending(r, fp) {
+  $('#pRef').textContent = (r && r.refId) || '—';
+  $('#pDev').textContent = `${fp.meta.browser} · ${fp.meta.os}`;
+  $('#pHw').textContent = fmtHw(fp.deviceId).replace('HW-ID: ', '').replace(' · Locked', '');
+  show('pending');
+}
+function showLocked(msg, fp, geo) {
+  if (msg) $('#lockMsg').textContent = msg;
+  $('#lkDev').textContent = `${fp.meta.browser} · ${fp.meta.os}`;
+  $('#lkLoc').textContent = geo && geo.gps ? `${geo.gps.lat}, ${geo.gps.lon} ±${geo.gps.acc}m` : (geo && geo.ip && geo.ip.ip ? 'IP ' + geo.ip.ip + (geo.ip.city ? ' · ' + geo.ip.city : '') : 'Not available');
+  show('locked');
+}
+async function doLogin(email, password) {
+  const btn = $('#bIn'), er = $('#eIn'); er.textContent = '';
+  email = email.trim().toLowerCase();
+  if (!navigator.onLine) { er.textContent = 'You are offline. Sign-in requires an internet connection.'; return; }
+  try {
+    setBtn(btn, 'Verifying Hardware ID...');
+    const fp = await fpP();
+    $('#hwTxt').textContent = fmtHw(fp.deviceId); $('#hwPill').className = 'pill ok';
+    setBtn(btn, 'Acquiring Location Telemetry...');
+    const geo = await collectTelemetry();
+    if (!geo.gps) { PENDING_LOGIN = { email, password }; show('geo'); return; }   // GPS is mandatory for a legitimate unlock
+    setBtn(btn, 'Authenticating...');
+    SESS = null;
+    const r = await api('login', { email, password, geo, deviceMeta: fp.meta });
+    store.set(K.last, email);
+    if (r.ok && r.token) {
+      const role = String(r.role || 'plumber').toLowerCase();
+      SESS = { email, name: r.name || '', role, refId: r.refId || '', token: r.token, exp: r.exp || null, verifiedAt: Date.now(), chk: Date.now(), appSha: '' };
+      KEY = null; store.del(K.cache); saveSess(); PENDING_LOGIN = null;
+      $('#inPw').value = '';
+      if (role === 'admin') { setBtn(btn, 'Opening Admin Console...'); await openAdmin(); }
+      else { setBtn(btn, 'Decrypting DPNG Studio...'); await launchStudio({ skipVerify: true }); }
+      return;
+    }
+    const k = classify(r);
+    if (k === 'pending') showPending(r, fp);
+    else if (k === 'blocked') show('blocked');
+    else if (k === 'locked') showLocked(em(r), fp, geo);
+    else er.textContent = em(r);
+  } catch (e) { er.textContent = 'Unexpected error: ' + (e && e.message || e); }
+  finally { setBtn(btn, 'Sign In', false); }
+}
+$('#fIn').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('#inEmail').value.trim(), pw = $('#inPw').value;
+  if (!V.email(email)) { mark('gInE', 'hInE', false, 'Enter a valid email address.'); return; }
+  if (!pw) { $('#eIn').textContent = 'Enter your password.'; return; }
+  await doLogin(email, pw);
+});
+$('#inEmail').addEventListener('input', e => { const v = e.target.value; mark('gInE', 'hInE', v ? V.email(v) : null, 'Enter a valid email address.'); });
+function strength(p) { let s = 0; if (p.length >= 8) s++; if (p.length >= 12) s++; if (/[a-z]/.test(p) && /[A-Z]/.test(p)) s++; if (/\d/.test(p)) s++; if (/[^A-Za-z0-9]/.test(p)) s++; return s; }
+$('#upName').addEventListener('input', e => mark('gUpN', 'hUpN', e.target.value ? V.name(e.target.value) : null, 'Enter your full name.'));
+$('#upEmail').addEventListener('input', e => mark('gUpE', 'hUpE', e.target.value ? V.email(e.target.value) : null, 'Enter a valid email address.'));
+$('#upPhone').addEventListener('input', e => mark('gUpM', 'hUpM', e.target.value ? V.phone(e.target.value) : null, 'Enter 4–24 letters, digits or - / + characters.'));
+$('#upPw').addEventListener('input', e => {
+  const v = e.target.value, s = strength(v), m = $('#meter');
+  m.style.width = (s * 20) + '%'; m.style.background = s <= 2 ? 'var(--cr)' : s === 3 ? 'var(--am)' : 'var(--em)';
+  mark('gUpP', 'hUpP', v ? V.pw(v) : null, 'Min 8 characters with upper-case, lower-case and a digit.');
+});
+$('#fUp').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('#upName').value, email = $('#upEmail').value.trim().toLowerCase(), phone = $('#upPhone').value, pw = $('#upPw').value, er = $('#eUp'), btn = $('#bUp');
+  er.textContent = '';
+  const okN = V.name(name), okE = V.email(email), okM = V.phone(phone), okP = V.pw(pw);
+  mark('gUpN', 'hUpN', okN, 'Enter your full name.'); mark('gUpE', 'hUpE', okE, 'Enter a valid email address.');
+  mark('gUpM', 'hUpM', okM, 'Enter 4–24 letters, digits or - / + characters.'); mark('gUpP', 'hUpP', okP, 'Min 8 characters with upper-case, lower-case and a digit.');
+  if (!(okN && okE && okM && okP)) return;
+  if (!navigator.onLine) { er.textContent = 'You are offline.'; return; }
+  try {
+    setBtn(btn, 'Verifying Hardware ID...');
+    const fp = await fpP();
+    $('#hwTxt').textContent = fmtHw(fp.deviceId); $('#hwPill').className = 'pill ok';
+    setBtn(btn, 'Capturing Location Telemetry...');
+    const geo = await collectTelemetry();
+    setBtn(btn, 'Submitting Request...');
+    SESS = null;
+    const r = await api('register', { name: name.trim(), email, phone: phone.trim(), password: pw, geo, deviceMeta: fp.meta });
+    if (r.ok) { store.set(K.last, email); $('#upPw').value = ''; showPending({ refId: r.refId }, fp); }
+    else er.textContent = em(r);
+  } catch (x) { er.textContent = 'Unexpected error: ' + (x && x.message || x); }
+  finally { setBtn(btn, 'Request Access', false); }
+});
+$('#fSet').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('#setEmail').value.trim().toLowerCase(), pw = $('#setPw').value, code = $('#setCode').value, er = $('#eSet'), btn = $('#bSet');
+  er.textContent = '';
+  if (!V.email(email)) { er.textContent = 'Enter a valid admin email address.'; return; }
+  if (pw.length < 4) { er.textContent = 'Password must be 4+ characters.'; return; }
+  if (!code) { er.textContent = 'Enter the admin setup code.'; return; }
+  if (!navigator.onLine) { er.textContent = 'You are offline.'; return; }
+  setBtn(btn, 'Creating Admin...');
+  SESS = null;
+  const r = await api('adminSetup', { email, password: pw, setup: code });
+  setBtn(btn, 'Create Admin', false);
+  if (r.ok) { switchTab('in'); $('#inEmail').value = email; $('#setPw').value = ''; $('#setCode').value = ''; ADMIN_READY = true; $('#setLnk').hidden = true; setBanner('Admin created. Ab sign in karo.', 'ok'); }
+  else er.textContent = em(r);
+});
+$('#setLnk').addEventListener('click', () => { $('#fIn').hidden = true; $('#fUp').hidden = true; $('#fSet').hidden = false; setBanner(''); });
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (b) { switchTab(b.dataset.t); setBanner(''); } });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-eye]'); if (!b) return;
+  const i = $('#' + b.dataset.eye); i.type = i.type === 'password' ? 'text' : 'password';
+});
+['pBack', 'lkBack', 'blBack', 'geoBack'].forEach(id => $('#' + id).addEventListener('click', () => { PENDING_LOGIN = null; show('auth'); }));
+$('#geoRetry').addEventListener('click', async () => {
+  const b = $('#geoRetry'); setBtn(b, 'Verifying location...');
+  const g = await refreshGps();
+  setBtn(b, 'Verify Location & Retry', false);
+  if (!g.ok) { toast('Location is still unavailable. Enable it in your browser settings.', 'bad', 4500); return; }
+  if (PENDING_LOGIN) { const p = PENDING_LOGIN; show('auth'); await doLogin(p.email, p.password); } else show('auth');
+});
+$('#gpsPill').addEventListener('click', refreshGps);
+$('#hwPill').addEventListener('click', async () => { const fp = await fpP(); toast('Hardware ID: ' + fp.deviceId.slice(0, 16) + '… · ' + fp.meta.os + ' · ' + fp.meta.browser); });
+
+/* ============================================================================
+ * LAUNCH STUDIO (secure bootloader)
+ * ========================================================================== */
+
+function stepAt(i) { $$('#lnSteps li').forEach((li, n) => { li.classList.toggle('done', n < i); li.classList.toggle('act', n === i); }); }
+async function handleSessionFail(r, fp) {
+  const k = classify(r);
+  clearSess();
+  fp = fp || await fpP();
+  if (k === 'locked') showLocked(em(r), fp, null);
+  else if (k === 'blocked') show('blocked');
+  else if (k === 'pending') showPending({ refId: '—' }, fp);
+  else { show('auth'); setBanner(em(r) || 'Session ended. Please sign in again.', 'bad'); }
+}
+function applyVerified(v) {
+  SESS.verifiedAt = Date.now();
+  if (v && v.role) SESS.role = String(v.role).toLowerCase();
+  if (v && v.name) SESS.name = v.name;
+  saveSess();
+}
+const withinGrace = () => SESS && (Date.now() - (SESS.verifiedAt || 0)) < CONFIG.OFFLINE_GRACE_H * 3600000;
+
+async function launchStudio({ skipVerify = false } = {}) {
+  show('launch'); stepAt(0); stopAdminTimer();
+  const fp = await fpP();
+  let offline = false;
+  if (!skipVerify) {
+    const v = await api('ping');
+    if (isNet(v)) offline = true;
+    else if (denied(v)) return handleSessionFail(v, fp);
+    else if (v.ok) applyVerified(v);
+    else { show('auth'); setBanner(em(v), 'bad'); return; }
+  }
+  stepAt(1); await sleep(180);
+  if (offline && !withinGrace()) { show('auth'); setBanner('Offline for too long. Connect to the internet and sign in again.', 'bad'); return; }
+  stepAt(2);
+  let html = await cacheLoad();
+  if (!html) {
+    if (offline) { show('auth'); setBanner('No offline copy is available. Connect to the internet to unlock the Studio.', 'bad'); return; }
+    const r = await api('app', {}, 60000);
+    if (!r.ok || !r.html) {
+      if (isNet(r)) { show('auth'); setBanner(em(r), 'bad'); return; }
+      if (denied(r)) return handleSessionFail(r, fp);
+      show('auth'); setBanner(em(r) || 'Application could not be loaded.', 'bad'); return;
+    }
+    html = r.html; SESS.appSha = await sha256(html); saveSess();
+    if (!(await cacheStore(html))) { show('auth'); setBanner('Phone storage full hai, secure offline copy save nahi ho payi. Space khali karke dobara sign in karo.', 'bad'); return; }
+  }
+  stepAt(3); await sleep(120);
+  return bootApp(html, offline);
+}
+
+/* Session + device bridge: gives app.html exactly what it expects before the page is replaced */
+async function bridge() {
+  const fp = await fpP();
+  store.set(K.dev, fp.deviceId); offSet(K.dev, fp.deviceId);
+  const s = SESS;
+  store.set(K.sess, JSON.stringify({ email: s.email, name: s.name, role: String(s.role || '').toLowerCase(), refId: s.refId || '', token: s.token, exp: s.exp || null, verifiedAt: s.verifiedAt, chk: Date.now(), appSha: s.appSha || '' }));
+  try { const p = JSON.parse(store.get(K.prefs) || '{}') || {}; p.url = getUrl(); store.set(K.prefs, JSON.stringify(p)); } catch { /* ignore */ }
+  window.DPNG_LOADER = 1; window.DPNG_ADMIN_READY = true; window.DPNG_URL = getUrl(); window.DPNG_LOGOUT = doLogout;
+}
+async function bootApp(html, offline) {
+  stopBg(); stopAdminTimer();
+  await bridge();
+  document.open(); document.write(html); document.close();
+  try { addPill(offline); } catch (e) { console.error(e); }
+  startHeartbeat();
+}
+
+function startHeartbeat() {
+  clearInterval(HB);
+  HB = setInterval(async () => {
+    if (!SESS) return;
+    const r = await api('ping');
+    if (r.ok) applyVerified(r);
+    else if (isNet(r)) { if (!withinGrace()) wipeAndLock('OFFLINE_EXPIRED'); }
+    else if (denied(r)) wipeAndLock(kindCode(classify(r)));
+  }, CONFIG.HEARTBEAT_MS);
+}
+function wipeAndLock(code) {
+  clearInterval(HB);
+  try { sessionStorage.setItem(K.msg, code); } catch { /* ignore */ }
+  clearSess();
+  try { document.documentElement.innerHTML = ''; } catch { /* ignore */ }
+  location.reload();
+}
+async function doLogout(code) {
+  clearInterval(HB);
+  try { sessionStorage.setItem(K.msg, typeof code === 'string' ? code : 'LOGGED_OUT'); } catch { /* ignore */ }
+  clearSess();
+  location.reload();
+}
+
+/* Floating control pill inside the loaded DPNG app (inline styles — page CSS is gone after document.write) */
+function addPill(offline) {
+  const old = document.getElementById('dpng-gate-pill'); if (old) old.remove();
+  const d = document.createElement('div'); d.id = 'dpng-gate-pill';
+  d.style.cssText = 'position:fixed;right:8px;bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:99999;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 16px);font:12px system-ui,sans-serif';
+  const base = 'border:0;border-radius:14px;padding:6px 10px;background:#00f3ff;color:#021218;font:600 12px system-ui,sans-serif;opacity:.92;cursor:pointer';
+  const mk = (txt, fn, css) => { const b = document.createElement('button'); b.textContent = txt; b.style.cssText = base + (css || ''); b.onclick = fn; return b; };
+  const items = [];
+  if (offline) { const s = document.createElement('span'); s.textContent = 'Encrypted offline cache'; s.style.cssText = 'background:#000c;color:#fff;padding:6px 10px;border-radius:14px'; items.push(s); }
+  const upd = mk('🔄 Check for Update', async () => {
+    upd.textContent = 'Checking…';
+    const r = await api('app', {}, 60000);
+    if (!r.ok || !r.html) {
+      if (denied(r)) return wipeAndLock(kindCode(classify(r)));
+      upd.textContent = isNet(r) ? 'Offline — baad me try karo' : em(r);
+    } else {
+      const sh = await sha256(r.html);
+      if (sh === SESS.appSha) upd.textContent = 'Already latest ✓';
+      else if (!(await cacheStore(r.html))) upd.textContent = 'Storage full';
+      else { SESS.appSha = sh; saveSess(); upd.textContent = 'Updated — reloading…'; setTimeout(() => location.reload(), 700); return; }
+    }
+    setTimeout(() => { upd.textContent = '🔄 Check for Update'; }, 2600);
+  });
+  items.push(upd);
+  if (SESS && SESS.role === 'admin') items.push(mk('🛡️ Admin', () => location.reload(), ';background:#ff00ea;color:#fff'));
+  items.push(mk('🔒 Logout', () => doLogout(), ';background:#ff3b5c;color:#fff'));
+  items.push(mk('⚙', () => { const v = prompt('Backend (Apps Script /exec) URL', getUrl()); if (v && v.trim()) { store.set(K.url, v.trim()); location.reload(); } }));
+  const minNow = () => store.get(K.pill) !== '0';
+  const tg = mk(minNow() ? '◂' : '▸', () => {
+    const min = !minNow(); store.set(K.pill, min ? '1' : '0');
+    items.forEach(i => { i.style.display = min ? 'none' : ''; }); tg.textContent = min ? '◂' : '▸';
+  }, ';background:#0d1b29;color:#00f3ff;border:1px solid #00f3ff55');
+  if (minNow()) items.forEach(i => { i.style.display = 'none'; });
+  d.append(...items, tg);
+  document.body.appendChild(d);
+}
+
+/* ============================================================================
+ * ADMIN SECURITY CONSOLE
+ * ========================================================================== */
+
+const AD = { users: [], logs: [], auditErr: '', kpi: {}, tab: 'users', filter: 'all', q: '', busy: false };
+const EV = {
+  DEVICE_MISMATCH: ['red', 'Device Mismatch'], WRONG_PASSWORD: ['red', 'Wrong Password'], BLOCKED_ATTEMPT: ['red', 'Blocked Attempt'], TOO_MANY_ATTEMPTS: ['red', 'Brute-force Lockout'],
+  APP_ACCESS: ['green', 'App Access'], SIGNUP: ['amber', 'Sign-Up'], PENDING_ATTEMPT: ['amber', 'Pending Attempt'], LOCATION_DENIED: ['amber', 'Location Denied'], ADMIN_ACTION: ['cyan', 'Admin Action']
+};
+const GRP = { all: null, bad: ['DEVICE_MISMATCH', 'WRONG_PASSWORD', 'BLOCKED_ATTEMPT', 'TOO_MANY_ATTEMPTS'], ok: ['APP_ACCESS'], pend: ['SIGNUP', 'PENDING_ATTEMPT'] };
+
+function stopAdminTimer() { clearInterval(ADT); ADT = 0; }
+async function openAdmin() {
+  show('admin');
+  $('#adWho').textContent = `${SESS.name || 'Administrator'} · ${SESS.email}`;
+  await loadAdmin();
+  stopAdminTimer();
+  ADT = setInterval(() => { if (!document.hidden && $('.scr.on') && $('.scr.on').dataset.s === 'admin') loadAdmin(true); }, 30000);
+}
+const stNorm = s => { s = String(s || '').toLowerCase(); return s === 'approved' ? 'active' : s; };
+async function loadAdmin(silent) {
+  if (AD.busy) return; AD.busy = true;
+  if (!silent) $('#adBody').innerHTML = '<div class="empty">Loading security data…</div>';
+  const [u, a] = await Promise.all([api('users'), api('auditLogs')]);
+  AD.busy = false;
+  if (!u.ok) {
+    if (denied(u)) return handleSessionFail(u);
+    if (!silent) $('#adBody').innerHTML = `<div class="empty">${esc(em(u))}</div>`;
+    return;
+  }
+  AD.users = u.users || [];
+  if (a && a.ok) { AD.logs = a.logs || []; AD.auditErr = ''; }
+  else { AD.logs = []; AD.auditErr = isNet(a) ? 'Audit logs load nahi hue (network).' : 'Is backend me security audit log abhi enable nahi hai. Backend (Apps Script) me "auditLogs" action add hone par yahan Geolocation Audit apne aap dikhne lagega.'; }
+  const dayAgo = Date.now() - 86400000;
+  AD.kpi = {
+    total: AD.users.length,
+    pending: AD.users.filter(x => stNorm(x.status) === 'pending').length,
+    activeDevices: AD.users.filter(x => stNorm(x.status) === 'active' && x.device).length,
+    suspicious24h: AD.logs.filter(l => GRP.bad.includes(l.event) && Date.parse(l.tsISO) >= dayAgo).length
+  };
+  renderAdmin();
+}
+function renderKpi() {
+  const k = AD.kpi || {};
+  $('#adKpi').innerHTML =
+    `<div class="kpi tot"><small>Total Users</small><b>${k.total ?? 0}</b></div>` +
+    `<div class="kpi pend ${k.pending ? 'pulse' : ''}"><small>Pending Approvals</small><b>${k.pending ?? 0}</b></div>` +
+    `<div class="kpi act"><small>Active Approved Devices</small><b>${k.activeDevices ?? 0}</b></div>` +
+    `<div class="kpi sus ${k.suspicious24h ? 'alert' : ''}"><small>Unauthorized / Suspicious (24h)</small><b>${k.suspicious24h ?? 0}</b></div>`;
+}
+const mapsLink = (lat, lon) => (lat === '' || lat == null || lon === '' || lon == null) ? '' :
+  `<a class="btn sm maps" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lon)}">📍 Open in Google Maps</a>`;
+const coords = (lat, lon, acc, src) => (lat === '' || lat == null || !isFinite(+lat)) ? '—' : `${(+lat).toFixed(5)}, ${(+lon).toFixed(5)}` + (src === 'GPS' && acc !== '' && acc != null ? ` ±${acc} m` : (src === 'IP' ? ' (IP-approx)' : (acc ? ` ±${acc} m` : '')));
+const stBadge = s => { const n = stNorm(s); return `<span class="bdg ${n === 'active' ? 'green' : n === 'pending' ? 'amber' : 'red'}">${esc(n === 'active' ? 'ACTIVE' : String(n).toUpperCase())}</span>`; };
+const roleBadge = r => { r = String(r || '').toLowerCase(); return `<span class="bdg ${r === 'admin' ? 'mag' : r === 'supervisor' ? 'cyan' : 'green'}">${esc(r.toUpperCase() || 'USER')}</span>`; };
+const devChip = m => m && (m.os || m.browser) ? `<span class="chipd">${esc(m.browser || '?')} · ${esc(m.os || '?')}</span>` : '';
+const shortDev = d => { d = String(d || ''); return /^[a-f0-9]{64}$/i.test(d) ? d.slice(0, 8) + '••••' + d.slice(-4) : d.slice(0, 12); };
+const metaOf = u => { let m = u.deviceMeta || u.boundDeviceMeta || {}; if (typeof m === 'string') { try { m = JSON.parse(m); } catch { m = {}; } } return m; };
+
+function userRows() {
+  const q = AD.q.toLowerCase();
+  const list = AD.users.filter(u => !q || [u.name, u.email, u.phone, u.status, u.role, u.lastAddress, u.device].join(' ').toLowerCase().includes(q));
+  if (!list.length) return '<div class="empty">No users match.</div>';
+  const rows = list.map(u => {
+    const role = String(u.role || '').toLowerCase(), master = role === 'admin' || String(u.email).toLowerCase() === CONFIG.ADMIN_EMAIL, st = stNorm(u.status), e = esc(u.email);
+    let acts = '<span class="sm">Master administrator</span>';
+    if (!master) {
+      if (st === 'pending') acts = '<div class="acts">' +
+        `<button class="btn sm good" data-op="approve" data-v="plumber" data-e="${e}">✓ Approve as Plumber</button>` +
+        `<button class="btn sm good" data-op="approve" data-v="supervisor" data-e="${e}">✓ Approve as Supervisor</button>` +
+        `<button class="btn sm danger" data-op="delete" data-e="${e}">🗑 Delete</button></div>`;
+      else acts = '<div class="acts">' +
+        `<select data-role="1" data-e="${e}" aria-label="Role">${['plumber', 'supervisor'].map(x => `<option ${x === role ? 'selected' : ''}>${x}</option>`).join('')}</select>` +
+        (st === 'blocked' ? `<button class="btn sm good" data-op="activate" data-e="${e}">✓ Activate</button>` : `<button class="btn sm danger" data-op="block" data-e="${e}">✕ Block</button>`) +
+        (u.device ? `<button class="btn sm warn" data-op="reset" data-e="${e}">🔓 Reset Device Lock</button>` : '') +
+        `<button class="btn sm danger" data-op="delete" data-e="${e}">🗑 Delete</button></div>`;
+    }
+    const lat = u.lastLat, lon = u.lastLon;
+    return `<tr>
+      <td data-l="User"><div class="nm">${esc(u.name || u.email)} ${roleBadge(role)}${u.online ? ' <span class="bdg green">LIVE</span>' : ''}</div><div class="sm">${esc(u.email)}</div><div class="sm">${esc(u.phone || '')}${u.refId ? ' · <span class="mono">' + esc(u.refId) + '</span>' : ''}</div></td>
+      <td data-l="Status">${stBadge(u.status)}</td>
+      <td data-l="Bound Device">${u.device ? `<span class="mono">${esc(shortDev(u.device))}</span><br>${devChip(metaOf(u))}` : '<span class="sm">Unbound</span>'}</td>
+      <td data-l="Last Access Location"><div>${esc(u.lastAddress || '—')}</div><div class="sm mono">${esc(coords(lat, lon, u.lastAcc, u.lastSource))}</div>${u.lastIp ? `<div class="sm">IP ${esc(u.lastIp)}${u.lastIsp ? ' · ' + esc(u.lastIsp) : ''}</div>` : ''}<div style="margin-top:6px">${mapsLink(lat, lon)}</div></td>
+      <td data-l="Last Seen"><div>${esc(ago(u.lastSeen))}</div><div class="sm">${esc(u.lastSeen ? ist(u.lastSeen) : '')}</div></td>
+      <td data-l="Actions">${acts}</td></tr>`;
+  }).join('');
+  return `<div class="twrap"><table class="tbl"><thead><tr><th>User</th><th>Status</th><th>Bound Device</th><th>Last Access Location</th><th>Last Seen</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function logRows() {
+  if (AD.auditErr) return `<div class="empty">${esc(AD.auditErr)}</div>`;
+  const q = AD.q.toLowerCase(), g = GRP[AD.filter];
+  const list = AD.logs.filter(l => (!g || g.includes(l.event)) && (!q || [l.email, l.event, l.ip, l.isp, l.address, l.note, l.deviceMeta].join(' ').toLowerCase().includes(q)));
+  if (!list.length) return '<div class="empty">No audit events match this filter.</div>';
+  const rows = list.map(l => {
+    const ev = EV[l.event] || ['cyan', l.event];
+    let m = {}; try { m = JSON.parse(l.deviceMeta || '{}'); } catch { /* ignore */ }
+    return `<tr>
+      <td data-l="Timestamp (IST)"><div class="mono">${esc(l.tsIST || (l.tsISO ? ist(l.tsISO) : ''))}</div><div class="sm">${esc(ago(l.tsISO))}</div></td>
+      <td data-l="User">${esc(l.email || '—')}</td>
+      <td data-l="Event"><span class="bdg ${ev[0]}">${esc(ev[1])}</span>${l.alert ? `<div class="sm mono" style="margin-top:4px">${esc(l.alert)}</div>` : ''}${l.note ? `<div class="sm">${esc(l.note)}</div>` : ''}</td>
+      <td data-l="Device">${l.deviceId ? `<span class="mono">${esc(shortDev(l.deviceId))}</span><br>${devChip(m)}` : '—'}</td>
+      <td data-l="IP &amp; ISP"><div class="mono">${esc(l.ip || '—')}</div><div class="sm">${esc(l.isp || '')}</div></td>
+      <td data-l="Coordinates"><div class="mono">${esc(coords(l.lat, l.lon, l.acc, l.geoSource))}</div></td>
+      <td data-l="Address"><div>${esc(l.address || l.city || '—')}</div><div style="margin-top:6px">${mapsLink(l.lat, l.lon)}</div></td></tr>`;
+  }).join('');
+  return `<div class="twrap"><table class="tbl"><thead><tr><th>Timestamp (IST)</th><th>User</th><th>Event</th><th>Device</th><th>IP &amp; ISP</th><th>Coordinates</th><th>Reverse-Geocoded Address</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function renderAdmin() {
+  renderKpi();
+  $('#adChips').hidden = AD.tab !== 'logs';
+  $('#adBody').innerHTML = AD.tab === 'users' ? userRows() : logRows();
+}
+$$('[data-at]').forEach(b => b.addEventListener('click', () => { AD.tab = b.dataset.at; $$('[data-at]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
+$$('[data-f]').forEach(b => b.addEventListener('click', () => { AD.filter = b.dataset.f; $$('[data-f]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
+$('#adQ').addEventListener('input', e => { AD.q = e.target.value.trim(); renderAdmin(); });
+$('#adRef').addEventListener('click', () => loadAdmin());
+$('#adLaunch').addEventListener('click', () => launchStudio());
+$('#adOut').addEventListener('click', () => doLogout());
+$('#adBody').addEventListener('click', async e => {
+  const b = e.target.closest('[data-op]'); if (!b) return;
+  const op = b.dataset.op, target = b.dataset.e, v = b.dataset.v || '';
+  const T = {
+    block: ['Block this user?', `${target} will be signed out and cannot log in.`, 'Block User', true],
+    reset: ['Reset device lock?', `${target} will be able to bind and log in from a new phone or laptop on their next sign-in.`, 'Reset Lock', false],
+    delete: ['Delete this user permanently?', `${target} and their device binding will be removed.`, 'Delete User', true]
+  };
+  if (T[op] && !(await askConfirm(T[op][0], T[op][1], T[op][2], T[op][3]))) return;
+  b.disabled = true;
+  const body = { approve: { field: 'approve', value: v }, activate: { field: 'status', value: 'active' }, block: { field: 'status', value: 'blocked' }, reset: { field: 'reset' }, delete: { field: 'delete' } }[op];
+  const r = await api('setUser', { email: target, ...body });
+  if (r.ok) { toast({ approve: 'User approved ✓', activate: 'User activated ✓', block: 'User blocked', reset: 'Device lock reset', delete: 'User deleted' }[op], 'ok'); await loadAdmin(true); }
+  else { b.disabled = false; if (denied(r)) return handleSessionFail(r); toast(em(r), 'bad'); }
+});
+$('#adBody').addEventListener('change', async e => {
+  const s = e.target.closest('select[data-role]'); if (!s) return;
+  const r = await api('setUser', { email: s.dataset.e, field: 'role', value: s.value });
+  if (r.ok) toast('Role saved ✓', 'ok'); else { if (denied(r)) return handleSessionFail(r); toast(em(r), 'bad'); loadAdmin(true); }
+});
+
+/* ============================================================================
+ * MODALS
+ * ========================================================================== */
+
+function openModal(html) { const m = $('#modal'); m.innerHTML = `<div class="mbox">${html}</div>`; m.classList.add('on'); }
+function closeModal() { const m = $('#modal'); m.classList.remove('on'); m.innerHTML = ''; }
+$('#modal').addEventListener('mousedown', e => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function askConfirm(title, msg, okLabel, danger = true) {
+  return new Promise(res => {
+    openModal(`<h3>${esc(title)}</h3><p>${esc(msg)}</p><div class="row"><button class="btn ghost" id="mNo" type="button">Cancel</button><button class="btn ${danger ? 'danger' : 'warn'}" id="mYes" type="button">${esc(okLabel)}</button></div>`);
+    $('#mNo').onclick = () => { closeModal(); res(false); };
+    $('#mYes').onclick = () => { closeModal(); res(true); };
+  });
+}
+$('#gear').addEventListener('click', () => {
+  openModal(`<h3>Backend connection</h3><p>Paste the Apps Script <b>/exec</b> Web App URL for the DPNG backend.</p><input id="mUrl" type="url" inputmode="url" autocomplete="off" spellcheck="false" value="${esc(getUrl())}"><div class="err" id="mErr" style="display:none"></div><div class="row"><button class="btn" id="mTest" type="button">Test</button><button class="btn primary" id="mSave" type="button"><span class="spin"></span><span class="lbl">Save</span></button></div><div class="row"><button class="btn ghost" id="mDef" type="button">Reset to default</button><button class="btn ghost" id="mClose" type="button">Close</button></div>`);
+  const out = (t, ok) => { const e = $('#mErr'); e.style.display = 'block'; e.textContent = t; e.style.borderColor = ok ? 'rgba(0,255,136,.5)' : ''; e.style.color = ok ? '#b6ffd9' : ''; };
+  $('#mTest').onclick = async () => {
+    const u = $('#mUrl').value.trim(); if (!u) return out('Enter a URL first.');
+    try { const r = await fetch(u, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'status' }) }); const j = await r.json(); out(j && j.ok ? 'Connected ✓ (admin ' + (j.adminReady ? 'set up' : 'not set up yet') + ')' : 'Reachable but unexpected reply.', !!(j && j.ok)); }
+    catch { out('Could not reach the backend. Check the URL and that access is set to Anyone.'); }
+  };
+  $('#mSave').onclick = () => { const u = $('#mUrl').value.trim(); if (!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(u)) return out('URL must look like https://script.google.com/macros/s/…/exec'); store.set(K.url, u); closeModal(); toast('Backend saved', 'ok'); setBanner(''); };
+  $('#mDef').onclick = () => { store.del(K.url); $('#mUrl').value = CONFIG.SCRIPT_URL; out('Default restored.', true); };
+  $('#mClose').onclick = closeModal;
+});
+
+/* ============================================================================
+ * BLUEPRINT BACKGROUND
+ * ========================================================================== */
+let bgRaf = 0, bgStop = false;
+function stopBg() { bgStop = true; cancelAnimationFrame(bgRaf); }
+function startBg() {
+  const c = $('#bg'), x = c.getContext('2d', { alpha: false });
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W = 0, H = 0, dpr = 1, nodes = [], cross = [], last = 0, t = 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5); W = innerWidth; H = innerHeight;
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.min(34, Math.max(12, Math.round(W * H / 38000)));
+    nodes = Array.from({ length: n }, () => ({ x: rnd(0, W), y: rnd(0, H), vx: rnd(-.12, .12), vy: rnd(-.12, .12), m: Math.random() < .35 }));
+    cross = Array.from({ length: 3 }, () => ({ x: rnd(0, W), y: rnd(0, H), vx: rnd(-.25, .25), vy: rnd(-.2, .2) }));
+    draw();
+  }
+  function draw() {
+    const g = x.createRadialGradient(W / 2, H * .4, 0, W / 2, H * .4, Math.max(W, H) * .75);
+    g.addColorStop(0, '#0a1424'); g.addColorStop(1, '#050a12'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    const sp = 40, off = (t * 5) % sp, offM = (t * 5) % (sp * 5);
+    x.lineWidth = 1; x.strokeStyle = 'rgba(0,243,255,.045)'; x.beginPath();
+    for (let X = -off; X < W; X += sp) { x.moveTo(X + .5, 0); x.lineTo(X + .5, H); }
+    for (let Y = -off; Y < H; Y += sp) { x.moveTo(0, Y + .5); x.lineTo(W, Y + .5); }
+    x.stroke(); x.strokeStyle = 'rgba(0,243,255,.1)'; x.beginPath();
+    for (let X = -offM; X < W; X += sp * 5) { x.moveTo(X + .5, 0); x.lineTo(X + .5, H); }
+    for (let Y = -offM; Y < H; Y += sp * 5) { x.moveTo(0, Y + .5); x.lineTo(W, Y + .5); }
+    x.stroke();
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d > 190) continue;
+      const al = (1 - d / 190) * .42; x.strokeStyle = (a.m || b.m) ? `rgba(255,0,234,${al})` : `rgba(0,243,255,${al})`;
+      x.lineWidth = 1.2; x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, a.y); x.lineTo(b.x, b.y); x.stroke();
+    }
+    for (const n of nodes) {
+      const col = n.m ? '255,0,234' : '0,243,255';
+      x.fillStyle = `rgba(${col},.9)`; x.beginPath(); x.arc(n.x, n.y, 2.2, 0, 6.283); x.fill();
+      x.strokeStyle = `rgba(${col},.22)`; x.lineWidth = 1; x.beginPath(); x.arc(n.x, n.y, 7 + Math.sin(t * 2 + n.x) * 1.5, 0, 6.283); x.stroke();
+    }
+    x.font = '10px ui-monospace,Menlo,monospace'; x.textBaseline = 'middle';
+    for (const k of cross) {
+      x.strokeStyle = 'rgba(0,243,255,.38)'; x.lineWidth = 1; x.beginPath();
+      x.moveTo(k.x - 20, k.y); x.lineTo(k.x - 6, k.y); x.moveTo(k.x + 6, k.y); x.lineTo(k.x + 20, k.y);
+      x.moveTo(k.x, k.y - 20); x.lineTo(k.x, k.y - 6); x.moveTo(k.x, k.y + 6); x.lineTo(k.x, k.y + 20); x.stroke();
+      x.fillStyle = 'rgba(0,243,255,.45)'; x.fillText(`X ${(22 + k.x / 1e3).toFixed(4)}  Y ${(75 + k.y / 1e3).toFixed(4)}`, k.x + 10, k.y - 14);
+    }
+  }
+  function frame(ts) {
+    if (bgStop) return;
+    bgRaf = requestAnimationFrame(frame);
+    if (document.hidden || ts - last < 33) return;
+    const dt = Math.min(.08, (ts - last) / 1000 || .033); last = ts; t += dt;
+    for (const n of nodes) { n.x += n.vx; n.y += n.vy; if (n.x < -20) n.x = W + 20; if (n.x > W + 20) n.x = -20; if (n.y < -20) n.y = H + 20; if (n.y > H + 20) n.y = -20; }
+    for (const k of cross) { k.x += k.vx; k.y += k.vy; if (k.x < 0 || k.x > W) k.vx *= -1; if (k.y < 0 || k.y > H) k.vy *= -1; }
+    draw();
+  }
+  addEventListener('resize', () => { if (!bgStop) resize(); });
+  resize();
+  if (!reduce) bgRaf = requestAnimationFrame(frame);
+}
+
+
+/* ============================================================================
+ * BOOT
+ * ========================================================================== */
+
+async function resume() {
+  show('launch'); stepAt(0);
+  const fp = await fpP();
+  const v = await api('ping');
+  if (v.ok) {
+    applyVerified(v);
+    if (SESS.role === 'admin') return openAdmin();
+    return launchStudio({ skipVerify: true });
+  }
+  if (isNet(v)) {
+    // Offline: boot straight from the encrypted cache when still inside the offline grace window.
+    if (withinGrace() && store.get(K.cache)) { const html = await cacheLoad(); if (html) return bootApp(html, true); }
+    show('auth'); setBanner(withinGrace() ? 'Offline and no encrypted copy is cached. Connect to the internet.' : 'Offline for too long. Connect to the internet and sign in again.', 'bad'); return;
+  }
+  if (denied(v)) return handleSessionFail(v, fp);
+  show('auth'); setBanner(em(v), 'bad');
+}
+
+async function init() {
+  // Remove the legacy plaintext copy of app.html that older loaders left behind.
+  store.del('dpng_app'); offDel('dpng_app');
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  startBg();
+  fpP().then(fp => { $('#hwTxt').textContent = fmtHw(fp.deviceId); $('#hwPill').className = 'pill ok'; })
+    .catch(() => { $('#hwTxt').textContent = 'HW-ID: unavailable'; $('#hwPill').className = 'pill bad'; });
+  primeGeo();
+  const last = store.get(K.last); if (last) $('#inEmail').value = last;
+
+  let msg = null; try { msg = sessionStorage.getItem(K.msg); sessionStorage.removeItem(K.msg); } catch { /* ignore */ }
+  if (!crypto || !crypto.subtle) { setBanner('This page must be opened over HTTPS to enable hardware-secure features.', 'bad'); return; }
+  if (!getUrl()) setBanner('Backend not connected. Tap ⚙ and paste your Apps Script /exec URL.');
+  api('status').then(r => { if (r && r.ok) { ADMIN_READY = !!r.adminReady; $('#setLnk').hidden = ADMIN_READY; } }).catch(() => {});
+  if (msg === 'DEVICE_LOCKED_MISMATCH') { showLocked(null, await fpP(), null); return; }
+  if (msg === 'BLOCKED') { show('blocked'); return; }
+  if (msg === 'NOT_APPROVED') { showPending({ refId: '—' }, await fpP()); return; }
+  if (msg === 'LOGGED_OUT') setBanner('You have been signed out.', 'ok');
+  else if (msg === 'OFFLINE_EXPIRED') setBanner('Offline access window expired. Connect and sign in again.', 'bad');
+  else if (msg) setBanner('Your session was ended by the security system. Please sign in again.', 'bad');
+  if (SESS && SESS.token && getUrl()) return resume();
+}
+
+init();
 })();
-</script></body></html>
+</script>
+</body>
+</html>
