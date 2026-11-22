@@ -191,7 +191,6 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
         <svg viewBox="0 0 32 32" fill="none" stroke="#00f3ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h8v-8h8V8h8"/><circle cx="4" cy="22" r="2" fill="#00f3ff"/><circle cx="28" cy="8" r="2" fill="#ff00ea" stroke="#ff00ea"/><path d="M16 4v6M13 7h6" stroke="#ff00ea"/></svg>
       </div>
       <div class="grow"><h1>DPNG Job Card</h1><p>Engineering &amp; PNG Conversion Suite · Navonmesh Solutions</p></div>
-      <button class="icon-btn" id="gear" aria-label="Backend settings" title="Backend settings">⚙</button>
     </header>
 
     <div class="status-row">
@@ -1033,7 +1032,6 @@ function addPill(offline, target = 'studio') {
     }
 
     items.push(mk('🔒 Logout', () => doLogout(), ';background:#ff3b5c;color:#fff'));
-    items.push(mk('⚙', () => { const v = prompt('Backend (Apps Script /exec) URL', getUrl()); if (v && v.trim()) { store.set(K.url, v.trim()); location.reload(); } }));
     const minNow = () => store.get(K.pill) !== '0';
     const tg = mk(minNow() ? '◂' : '▸', () => {
       const min = !minNow(); store.set(K.pill, min ? '1' : '0');
@@ -1221,18 +1219,6 @@ function askConfirm(title, msg, okLabel, danger = true) {
     $('#mYes').onclick = () => { closeModal(); res(true); };
   });
 }
-$('#gear').addEventListener('click', () => {
-  openModal(`<h3>Backend connection</h3><p>Paste the Apps Script <b>/exec</b> Web App URL for the DPNG backend.</p><input id="mUrl" type="url" inputmode="url" autocomplete="off" spellcheck="false" value="${esc(getUrl())}"><div class="err" id="mErr" style="display:none"></div><div class="row"><button class="btn" id="mTest" type="button">Test</button><button class="btn primary" id="mSave" type="button"><span class="spin"></span><span class="lbl">Save</span></button></div><div class="row"><button class="btn ghost" id="mDef" type="button">Reset to default</button><button class="btn ghost" id="mClose" type="button">Close</button></div>`);
-  const out = (t, ok) => { const e = $('#mErr'); e.style.display = 'block'; e.textContent = t; e.style.borderColor = ok ? 'rgba(0,255,136,.5)' : ''; e.style.color = ok ? '#b6ffd9' : ''; };
-  $('#mTest').onclick = async () => {
-    const u = $('#mUrl').value.trim(); if (!u) return out('Enter a URL first.');
-    try { const r = await fetch(u, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'status' }) }); const j = await r.json(); out(j && j.ok ? 'Connected ✓ (admin ' + (j.adminReady ? 'set up' : 'not set up yet') + ')' : 'Reachable but unexpected reply.', !!(j && j.ok)); }
-    catch { out('Could not reach the backend. Check the URL and that access is set to Anyone.'); }
-  };
-  $('#mSave').onclick = () => { const u = $('#mUrl').value.trim(); if (!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(u)) return out('URL must look like https://script.google.com/macros/s/…/exec'); store.set(K.url, u); closeModal(); toast('Backend saved', 'ok'); setBanner(''); };
-  $('#mDef').onclick = () => { store.del(K.url); $('#mUrl').value = CONFIG.SCRIPT_URL; out('Default restored.', true); };
-  $('#mClose').onclick = closeModal;
-});
 
 /* ============================================================================
  * BLUEPRINT BACKGROUND
