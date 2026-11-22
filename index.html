@@ -980,67 +980,85 @@ async function checkAppUpdate(target = 'studio', btn = null) {
 
 /* Floating control pill inside the loaded DPNG app (inline styles — page CSS is gone after document.write) */
 function addPill(offline, target = 'studio') {
-  const old = document.getElementById('dpng-gate-pill'); if (old) old.remove();
-  const d = document.createElement('div'); d.id = 'dpng-gate-pill';
-  d.style.cssText = 'position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:99999;display:flex;gap:4px;align-items:center;flex-wrap:nowrap;justify-content:flex-end;max-width:calc(100vw - 16px);font:12px system-ui,sans-serif';
-  const base = 'border:0;border-radius:14px;padding:6px 10px;background:#00f3ff;color:#021218;font:600 12px system-ui,sans-serif;opacity:.92;cursor:pointer';
-  const mk = (txt, fn, css) => { const b = document.createElement('button'); b.textContent = txt; b.style.cssText = base + (css || ''); b.onclick = fn; return b; };
-  const items = [];
+  const attachPill = () => {
+    let cur = document.getElementById('dpng-gate-pill');
+    if (cur && document.body && cur.parentNode === document.body) return cur;
+    if (cur) cur.remove();
+    const d = document.createElement('div'); d.id = 'dpng-gate-pill';
+    d.style.cssText = 'position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:99999;display:flex;gap:4px;align-items:center;flex-wrap:nowrap;justify-content:flex-end;max-width:calc(100vw - 16px);font:12px system-ui,sans-serif';
+    const base = 'border:0;border-radius:14px;padding:6px 10px;background:#00f3ff;color:#021218;font:600 12px system-ui,sans-serif;opacity:.92;cursor:pointer';
+    const mk = (txt, fn, css) => { const b = document.createElement('button'); b.textContent = txt; b.style.cssText = base + (css || ''); b.onclick = fn; return b; };
+    const items = [];
 
-  const isMat = target === 'material';
-  const role = (SESS && SESS.role) || '';
-  const canSwitch = role === 'admin' || role === 'supervisor';
+    const isMat = target === 'material';
+    const role = (SESS && SESS.role) || '';
+    const canSwitch = role === 'admin' || role === 'supervisor';
 
-  if (offline) {
-    const s = document.createElement('span');
-    s.textContent = isMat ? 'Encrypted Material cache' : 'Encrypted Studio cache';
-    s.style.cssText = 'background:#000c;color:#fff;padding:6px 10px;border-radius:14px';
-    items.push(s);
-  }
-
-  // Update check
-  const upd = mk('🔄 Check for Update', () => checkAppUpdate(target, upd));
-  items.push(upd);
-
-  // App Switcher for Admin & Supervisor
-  if (canSwitch) {
-    if (isMat) {
-      items.push(mk('📋 Job Card Studio', () => {
-        try { sessionStorage.setItem('dpng_launch_target', 'studio'); } catch {}
-        location.reload();
-      }, ';background:#00f3ff22;color:#00f3ff;border:1px solid #00f3ff66'));
-    } else {
-      items.push(mk('📦 Material & Billing', () => {
-        try { sessionStorage.setItem('dpng_launch_target', 'material'); } catch {}
-        location.reload();
-      }, ';background:#ff00ea22;color:#ff00ea;border:1px solid #ff00ea66'));
+    if (offline) {
+      const s = document.createElement('span');
+      s.textContent = isMat ? 'Encrypted Material cache' : 'Encrypted Studio cache';
+      s.style.cssText = 'background:#000c;color:#fff;padding:6px 10px;border-radius:14px';
+      items.push(s);
     }
 
-    if (role === 'admin') {
-      items.push(mk('🛡️ Admin Console', () => {
-        try { sessionStorage.setItem('dpng_launch_target', 'admin'); } catch {}
-        location.reload();
-      }, ';background:#ff00ea;color:#fff'));
-    } else if (role === 'supervisor') {
-      items.push(mk('🚪 Hub', () => {
-        try { sessionStorage.setItem('dpng_launch_target', 'launcher'); } catch {}
-        location.reload();
-      }, ';background:#0d1b29;color:#00f3ff;border:1px solid #00f3ff55'));
-    }
-  }
+    // Update check
+    const upd = mk('🔄 Check for Update', () => checkAppUpdate(target, upd));
+    items.push(upd);
 
-  items.push(mk('🔒 Logout', () => doLogout(), ';background:#ff3b5c;color:#fff'));
-  items.push(mk('⚙', () => { const v = prompt('Backend (Apps Script /exec) URL', getUrl()); if (v && v.trim()) { store.set(K.url, v.trim()); location.reload(); } }));
-  const minNow = () => store.get(K.pill) !== '0';
-  const tg = mk(minNow() ? '◂' : '▸', () => {
-    const min = !minNow(); store.set(K.pill, min ? '1' : '0');
-    items.forEach(i => { i.style.display = min ? 'none' : ''; }); tg.textContent = min ? '◂' : '▸';
-  }, ';width:26px;height:26px;min-height:26px;padding:0;display:grid;place-items:center;background:rgba(13,27,41,0.7);color:#00f3ff;border:1px solid #00f3ff44;border-radius:50%;opacity:.75');
-  if (minNow()) items.forEach(i => { i.style.display = 'none'; });
-  d.append(...items, tg);
-  document.body.appendChild(d);
-  window.DPNG_TRIGGER_UPDATE = () => { if (minNow()) tg.click(); upd.click(); };
-  window.DPNG_TOGGLE_PILL = () => { tg.click(); };
+    // App Switcher for Admin & Supervisor
+    if (canSwitch) {
+      if (isMat) {
+        items.push(mk('📋 Job Card Studio', () => {
+          try { sessionStorage.setItem('dpng_launch_target', 'studio'); } catch {}
+          location.reload();
+        }, ';background:#00f3ff22;color:#00f3ff;border:1px solid #00f3ff66'));
+      } else {
+        items.push(mk('📦 Material & Billing', () => {
+          try { sessionStorage.setItem('dpng_launch_target', 'material'); } catch {}
+          location.reload();
+        }, ';background:#ff00ea22;color:#ff00ea;border:1px solid #ff00ea66'));
+      }
+
+      if (role === 'admin') {
+        items.push(mk('🛡️ Admin Console', () => {
+          try { sessionStorage.setItem('dpng_launch_target', 'admin'); } catch {}
+          location.reload();
+        }, ';background:#ff00ea;color:#fff'));
+      } else if (role === 'supervisor') {
+        items.push(mk('🚪 Hub', () => {
+          try { sessionStorage.setItem('dpng_launch_target', 'launcher'); } catch {}
+          location.reload();
+        }, ';background:#0d1b29;color:#00f3ff;border:1px solid #00f3ff55'));
+      }
+    }
+
+    items.push(mk('🔒 Logout', () => doLogout(), ';background:#ff3b5c;color:#fff'));
+    items.push(mk('⚙', () => { const v = prompt('Backend (Apps Script /exec) URL', getUrl()); if (v && v.trim()) { store.set(K.url, v.trim()); location.reload(); } }));
+    const minNow = () => store.get(K.pill) !== '0';
+    const tg = mk(minNow() ? '◂' : '▸', () => {
+      const min = !minNow(); store.set(K.pill, min ? '1' : '0');
+      items.forEach(i => { i.style.display = min ? 'none' : ''; }); tg.textContent = min ? '◂' : '▸';
+    }, ';width:26px;height:26px;min-height:26px;padding:0;display:grid;place-items:center;background:rgba(13,27,41,0.7);color:#00f3ff;border:1px solid #00f3ff44;border-radius:50%;opacity:.75');
+    if (minNow()) items.forEach(i => { i.style.display = 'none'; });
+    d.append(...items, tg);
+    if (document.body) {
+      document.body.appendChild(d);
+    }
+    window.DPNG_TRIGGER_UPDATE = () => { if (minNow()) tg.click(); upd.click(); };
+    window.DPNG_TOGGLE_PILL = () => { tg.click(); };
+    return d;
+  };
+
+  attachPill();
+  if (!document.body || !document.getElementById('dpng-gate-pill')) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => attachPill(), { once: true });
+    }
+    const t = setInterval(() => {
+      if (document.body && (attachPill() || document.getElementById('dpng-gate-pill'))) clearInterval(t);
+    }, 10);
+    setTimeout(() => clearInterval(t), 3000);
+  }
 }
 
 /* ============================================================================
