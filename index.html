@@ -149,6 +149,14 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
   .tbl td::before{content:attr(data-l);display:block;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:2px}
   .ad-tabs input{flex:1 1 100%}
 }
+.hub-desc{color:var(--mut);font-size:13.5px;margin:8px 0 20px}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:12px}
+.hub-card{padding:20px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px;transition:all .2s ease;cursor:pointer}
+.hub-card:hover{background:rgba(0,243,255,.05);border-color:var(--ln);box-shadow:0 0 25px rgba(0,243,255,.12);translate:0 -2px}
+.hub-icon{font-size:32px;line-height:1}
+.hub-info h3{margin:0 0 4px;font-size:17px;color:var(--tx)}
+.hub-info p{margin:0;font-size:13px;color:var(--mut);line-height:1.4}
+.hub-card .btn{margin-top:auto}
 /* ---------- overlays ---------- */
 #modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,5,10,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 #modal.on{display:flex;animation:inn .25s}
@@ -288,7 +296,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
       <ul class="steps" id="lnSteps">
         <li><i></i>Verifying session token</li>
         <li><i></i>Confirming hardware lock</li>
-        <li><i></i>Decrypting DPNG Studio</li>
+        <li id="lnStepDecrypt"><i></i>Decrypting DPNG Studio</li>
       </ul>
     </section>
 
@@ -297,7 +305,11 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
       <div class="ad-head">
         <div><h2>Command Center</h2><p id="adWho">—</p></div>
         <div class="ad-actions">
-          <div class="mode"><button class="btn sm on" type="button" id="adCon">🛡️ Admin Security Console</button><button class="btn sm go" type="button" id="adLaunch">🚀 Launch DPNG Job Card Studio</button></div>
+          <div class="mode">
+            <button class="btn sm on" type="button" id="adCon">🛡️ Security Console</button>
+            <button class="btn sm go" type="button" id="adLaunchStudio">📋 Job Card Studio</button>
+            <button class="btn sm go" type="button" id="adLaunchMaterial" style="border-color:rgba(255,0,234,.4);color:#ff00ea">📦 Material &amp; Billing</button>
+          </div>
           <button class="btn sm" type="button" id="adOut">🔒 Logout</button>
         </div>
       </div>
@@ -316,6 +328,35 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
         <button class="chip" type="button" data-f="pend">⏳ Pending Sign-Ups</button>
       </div>
       <div id="adBody"></div>
+    </section>
+
+    <!-- ========== LAUNCHER (Operations Hub) ========== -->
+    <section class="scr" data-s="launcher">
+      <div class="ad-head">
+        <div><h2>Operations Hub</h2><p id="lncWho">—</p></div>
+        <div class="ad-actions">
+          <button class="btn sm" type="button" id="lncOut">🔒 Logout</button>
+        </div>
+      </div>
+      <p class="hub-desc">Select an engineering workspace to launch:</p>
+      <div class="hub-grid">
+        <div class="hub-card" id="btnLaunchStudio">
+          <div class="hub-icon">📋</div>
+          <div class="hub-info">
+            <h3>DPNG Job Card Studio</h3>
+            <p>Form assignment, feasibility remarks, camera OCR, drawing canvas, PDF generation &amp; GI complete.</p>
+          </div>
+          <button class="btn go" type="button">🚀 Launch Studio</button>
+        </div>
+        <div class="hub-card" id="btnLaunchMaterial">
+          <div class="hub-icon">📦</div>
+          <div class="hub-info">
+            <h3>Material &amp; Billing</h3>
+            <p>Meter stock intake, plumber issues/returns, live fitting balances, reconciliation &amp; bill settlements.</p>
+          </div>
+          <button class="btn go" type="button" style="background:linear-gradient(135deg,#00f3ff,#ff00ea)">📦 Launch Material &amp; Billing</button>
+        </div>
+      </div>
     </section>
 
     <p class="fine" id="foot">© Navonmesh Solutions · Zero-trust access control</p>
@@ -339,7 +380,7 @@ const CONFIG = {
   HEARTBEAT_MS: 180000,     // 3 minutes
   OFFLINE_GRACE_H: 72       // encrypted offline cache may boot without server contact for this long
 };
-const K = { url: 'dpng_script_url', uid: 'dpng_hw_uid', sess: 'dpng_sess', cache: 'dpng_app_enc', msg: 'dpng_msg', last: 'dpng_last_email', pill: 'dpng_pill_min', dev: 'dpng_dev', prefs: 'dpng_prefs' };
+const K = { url: 'dpng_script_url', uid: 'dpng_hw_uid', sess: 'dpng_sess', cache: 'dpng_app_enc', cacheMat: 'dpng_mat_enc', msg: 'dpng_msg', last: 'dpng_last_email', pill: 'dpng_pill_min', dev: 'dpng_dev', prefs: 'dpng_prefs' };
 
 /* ============================================================================
  * UTILITIES
@@ -403,7 +444,7 @@ const saveSess = () => {
   let c = null; try { c = JSON.parse(store.get(K.sess) || 'null'); } catch { c = null; }
   store.set(K.sess, JSON.stringify(Object.assign({}, c && c.email === SESS.email ? c : {}, SESS, { chk: Date.now() })));
 };
-const clearSess = () => { SESS = null; KEY = null; [K.sess, K.cache, 'dpng_app'].forEach(k => store.del(k)); offDel('dpng_sess'); offDel('dpng_app'); };
+const clearSess = () => { SESS = null; KEY = null; [K.sess, K.cache, K.cacheMat, 'dpng_app', 'dpng_mat', 'dpng_material_url'].forEach(k => store.del(k)); offDel('dpng_sess'); offDel('dpng_app'); offDel('dpng_mat'); try { sessionStorage.removeItem('dpng_launch_target'); } catch {} };
 
 /* ============================================================================
  * DEVICE FINGERPRINT
@@ -616,18 +657,20 @@ async function getKey() {
   KEY = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: enc.encode('DPNG-CACHE-v1|' + fp.deviceId), iterations: 120000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
   return KEY;
 }
-async function cacheStore(html) {
+async function cacheStore(html, target = 'studio') {
+  const cacheKey = target === 'material' ? K.cacheMat : K.cache;
   const key = await getKey(), iv = crypto.getRandomValues(new Uint8Array(12));
   const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(html)));
-  const ok = store.set(K.cache, JSON.stringify({ v: 1, iv: toB64(iv), ct: toB64(ct), t: Date.now() })); if (!ok) toast('Offline cache could not be saved (storage full).', 'bad'); return ok;
+  const ok = store.set(cacheKey, JSON.stringify({ v: 1, iv: toB64(iv), ct: toB64(ct), t: Date.now() })); if (!ok) toast('Offline cache could not be saved (storage full).', 'bad'); return ok;
 }
-async function cacheLoad() {
+async function cacheLoad(target = 'studio') {
+  const cacheKey = target === 'material' ? K.cacheMat : K.cache;
   try {
-    const raw = store.get(K.cache); if (!raw) return null;
+    const raw = store.get(cacheKey); if (!raw) return null;
     const o = JSON.parse(raw), key = await getKey();
     const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(o.iv) }, key, fromB64(o.ct));
     return new TextDecoder().decode(pt);
-  } catch { store.del(K.cache); return null; }
+  } catch { store.del(cacheKey); return null; }
 }
 
 
@@ -636,7 +679,7 @@ async function cacheLoad() {
  * ========================================================================== */
 function show(name) {
   $$('.scr').forEach(s => s.classList.toggle('on', s.dataset.s === name));
-  $('#card').classList.toggle('wide', name === 'admin');
+  $('#card').classList.toggle('wide', name === 'admin' || name === 'launcher');
   if (name !== 'admin') stopAdminTimer();
   window.scrollTo(0, 0);
 }
@@ -689,11 +732,12 @@ async function doLogin(email, password) {
     store.set(K.last, email);
     if (r.ok && r.token) {
       const role = String(r.role || 'plumber').toLowerCase();
-      SESS = { email, name: r.name || '', role, refId: r.refId || '', token: r.token, exp: r.exp || null, verifiedAt: Date.now(), chk: Date.now(), appSha: '' };
-      KEY = null; store.del(K.cache); saveSess(); PENDING_LOGIN = null;
+      SESS = { email, name: r.name || '', role, refId: r.refId || '', token: r.token, exp: r.exp || null, verifiedAt: Date.now(), chk: Date.now(), appSha: '', matSha: '', materialUrl: '' };
+      KEY = null; store.del(K.cache); store.del(K.cacheMat); saveSess(); PENDING_LOGIN = null;
       $('#inPw').value = '';
-      if (role === 'admin') { setBtn(btn, 'Opening Admin Console...'); await openAdmin(); }
-      else { setBtn(btn, 'Decrypting DPNG Studio...'); await launchStudio({ skipVerify: true }); }
+      if (role === 'admin') { setBtn(btn, 'Opening Command Center...'); await openAdmin(); }
+      else if (role === 'supervisor') { setBtn(btn, 'Opening Operations Hub...'); openLauncher(); }
+      else { setBtn(btn, 'Decrypting DPNG Studio...'); await launchApp('studio', { skipVerify: true }); }
       return;
     }
     const k = classify(r);
@@ -798,8 +842,19 @@ function applyVerified(v) {
 }
 const withinGrace = () => SESS && (Date.now() - (SESS.verifiedAt || 0)) < CONFIG.OFFLINE_GRACE_H * 3600000;
 
-async function launchStudio({ skipVerify = false } = {}) {
+function openLauncher() {
+  stopAdminTimer();
+  show('launcher');
+  $('#lncWho').textContent = `${SESS.name || 'Supervisor'} · ${SESS.email} · ${String(SESS.role || '').toUpperCase()}`;
+}
+
+async function launchApp(target = 'studio', { skipVerify = false } = {}) {
+  const isMat = target === 'material';
   show('launch'); stepAt(0); stopAdminTimer();
+  $('#lnTitle').textContent = isMat ? 'Unlocking Material & Billing' : 'Unlocking DPNG Studio';
+  const decryptEl = $('#lnStepDecrypt');
+  if (decryptEl) decryptEl.innerHTML = `<i></i>${isMat ? 'Decrypting Material &amp; Billing' : 'Decrypting DPNG Studio'}`;
+
   const fp = await fpP();
   let offline = false;
   if (!skipVerify) {
@@ -812,36 +867,68 @@ async function launchStudio({ skipVerify = false } = {}) {
   stepAt(1); await sleep(180);
   if (offline && !withinGrace()) { show('auth'); setBanner('Offline for too long. Connect to the internet and sign in again.', 'bad'); return; }
   stepAt(2);
-  let html = await cacheLoad();
+
+  let html = await cacheLoad(target);
   if (!html) {
-    if (offline) { show('auth'); setBanner('No offline copy is available. Connect to the internet to unlock the Studio.', 'bad'); return; }
-    const r = await api('app', {}, 60000);
+    if (offline) {
+      show('auth');
+      setBanner(isMat ? 'No offline copy of Material & Billing available. Connect to the internet.' : 'No offline copy is available. Connect to the internet to unlock the Studio.', 'bad');
+      return;
+    }
+    const action = isMat ? 'materialApp' : 'app';
+    const r = await api(action, {}, 60000);
     if (!r.ok || !r.html) {
       if (isNet(r)) { show('auth'); setBanner(em(r), 'bad'); return; }
       if (denied(r)) return handleSessionFail(r, fp);
-      show('auth'); setBanner(em(r) || 'Application could not be loaded.', 'bad'); return;
+      show('auth'); setBanner(em(r) || (isMat ? 'Material & Billing could not be loaded.' : 'Application could not be loaded.'), 'bad'); return;
     }
-    html = r.html; SESS.appSha = await sha256(html); saveSess();
-    if (!(await cacheStore(html))) { show('auth'); setBanner('Phone storage full hai, secure offline copy save nahi ho payi. Space khali karke dobara sign in karo.', 'bad'); return; }
+    html = r.html;
+    if (isMat) {
+      SESS.matSha = await sha256(html);
+      if (r.materialUrl) SESS.materialUrl = r.materialUrl;
+    } else {
+      SESS.appSha = await sha256(html);
+    }
+    saveSess();
+    if (!(await cacheStore(html, target))) {
+      show('auth'); setBanner('Phone storage full hai, secure offline copy save nahi ho payi. Space khali karke dobara sign in karo.', 'bad'); return;
+    }
   }
   stepAt(3); await sleep(120);
-  return bootApp(html, offline);
+  return bootApp(html, offline, target);
 }
 
-/* Session + device bridge: gives app.html exactly what it expects before the page is replaced */
-async function bridge() {
+/* Session + device bridge: gives app.html and material.html exactly what they expect before the page is replaced */
+async function bridge(target = 'studio') {
   const fp = await fpP();
   store.set(K.dev, fp.deviceId); offSet(K.dev, fp.deviceId);
   const s = SESS;
-  store.set(K.sess, JSON.stringify({ email: s.email, name: s.name, role: String(s.role || '').toLowerCase(), refId: s.refId || '', token: s.token, exp: s.exp || null, verifiedAt: s.verifiedAt, chk: Date.now(), appSha: s.appSha || '' }));
-  try { const p = JSON.parse(store.get(K.prefs) || '{}') || {}; p.url = getUrl(); store.set(K.prefs, JSON.stringify(p)); } catch { /* ignore */ }
-  window.DPNG_LOADER = 1; window.DPNG_ADMIN_READY = true; window.DPNG_URL = getUrl(); window.DPNG_LOGOUT = doLogout;
+  store.set(K.sess, JSON.stringify({
+    email: s.email, name: s.name, role: String(s.role || '').toLowerCase(),
+    refId: s.refId || '', token: s.token, exp: s.exp || null,
+    verifiedAt: s.verifiedAt, chk: Date.now(),
+    appSha: s.appSha || '', matSha: s.matSha || '', currentApp: target
+  }));
+  try {
+    const p = JSON.parse(store.get(K.prefs) || '{}') || {};
+    p.url = getUrl();
+    store.set(K.prefs, JSON.stringify(p));
+  } catch {}
+  window.DPNG_LOADER = 1;
+  window.DPNG_ADMIN_READY = true;
+  window.DPNG_URL = getUrl();
+  window.DPNG_LOGOUT = doLogout;
+  window.DPNG_CURRENT_APP = target;
+  if (s.materialUrl) {
+    window.DPNG_MATERIAL_URL = s.materialUrl;
+    store.set('dpng_material_url', s.materialUrl);
+  }
 }
-async function bootApp(html, offline) {
+async function bootApp(html, offline, target = 'studio') {
   stopBg(); stopAdminTimer();
-  await bridge();
+  await bridge(target);
   document.open(); document.write(html); document.close();
-  try { addPill(offline); } catch (e) { console.error(e); }
+  try { addPill(offline, target); } catch (e) { console.error(e); }
   startHeartbeat();
 }
 
@@ -870,30 +957,80 @@ async function doLogout(code) {
 }
 
 /* Floating control pill inside the loaded DPNG app (inline styles — page CSS is gone after document.write) */
-function addPill(offline) {
+function addPill(offline, target = 'studio') {
   const old = document.getElementById('dpng-gate-pill'); if (old) old.remove();
   const d = document.createElement('div'); d.id = 'dpng-gate-pill';
   d.style.cssText = 'position:fixed;right:8px;bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:99999;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 16px);font:12px system-ui,sans-serif';
   const base = 'border:0;border-radius:14px;padding:6px 10px;background:#00f3ff;color:#021218;font:600 12px system-ui,sans-serif;opacity:.92;cursor:pointer';
   const mk = (txt, fn, css) => { const b = document.createElement('button'); b.textContent = txt; b.style.cssText = base + (css || ''); b.onclick = fn; return b; };
   const items = [];
-  if (offline) { const s = document.createElement('span'); s.textContent = 'Encrypted offline cache'; s.style.cssText = 'background:#000c;color:#fff;padding:6px 10px;border-radius:14px'; items.push(s); }
+
+  const isMat = target === 'material';
+  const role = (SESS && SESS.role) || '';
+  const canSwitch = role === 'admin' || role === 'supervisor';
+
+  if (offline) {
+    const s = document.createElement('span');
+    s.textContent = isMat ? 'Encrypted Material cache' : 'Encrypted Studio cache';
+    s.style.cssText = 'background:#000c;color:#fff;padding:6px 10px;border-radius:14px';
+    items.push(s);
+  }
+
+  // Update check
   const upd = mk('🔄 Check for Update', async () => {
     upd.textContent = 'Checking…';
-    const r = await api('app', {}, 60000);
+    const action = isMat ? 'materialApp' : 'app';
+    const r = await api(action, {}, 60000);
     if (!r.ok || !r.html) {
       if (denied(r)) return wipeAndLock(kindCode(classify(r)));
       upd.textContent = isNet(r) ? 'Offline — baad me try karo' : em(r);
     } else {
       const sh = await sha256(r.html);
-      if (sh === SESS.appSha) upd.textContent = 'Already latest ✓';
-      else if (!(await cacheStore(r.html))) upd.textContent = 'Storage full';
-      else { SESS.appSha = sh; saveSess(); upd.textContent = 'Updated — reloading…'; setTimeout(() => location.reload(), 700); return; }
+      const curSha = isMat ? SESS.matSha : SESS.appSha;
+      if (sh === curSha) {
+        upd.textContent = 'Already latest ✓';
+      } else if (!(await cacheStore(r.html, target))) {
+        upd.textContent = 'Storage full';
+      } else {
+        if (isMat) { SESS.matSha = sh; if (r.materialUrl) SESS.materialUrl = r.materialUrl; }
+        else { SESS.appSha = sh; }
+        saveSess();
+        upd.textContent = 'Updated — reloading…';
+        setTimeout(() => location.reload(), 700);
+        return;
+      }
     }
     setTimeout(() => { upd.textContent = '🔄 Check for Update'; }, 2600);
   });
   items.push(upd);
-  if (SESS && SESS.role === 'admin') items.push(mk('🛡️ Admin', () => location.reload(), ';background:#ff00ea;color:#fff'));
+
+  // App Switcher for Admin & Supervisor
+  if (canSwitch) {
+    if (isMat) {
+      items.push(mk('📋 Job Card Studio', () => {
+        try { sessionStorage.setItem('dpng_launch_target', 'studio'); } catch {}
+        location.reload();
+      }, ';background:#00f3ff22;color:#00f3ff;border:1px solid #00f3ff66'));
+    } else {
+      items.push(mk('📦 Material & Billing', () => {
+        try { sessionStorage.setItem('dpng_launch_target', 'material'); } catch {}
+        location.reload();
+      }, ';background:#ff00ea22;color:#ff00ea;border:1px solid #ff00ea66'));
+    }
+
+    if (role === 'admin') {
+      items.push(mk('🛡️ Admin Console', () => {
+        try { sessionStorage.setItem('dpng_launch_target', 'admin'); } catch {}
+        location.reload();
+      }, ';background:#ff00ea;color:#fff'));
+    } else if (role === 'supervisor') {
+      items.push(mk('🚪 Hub', () => {
+        try { sessionStorage.setItem('dpng_launch_target', 'launcher'); } catch {}
+        location.reload();
+      }, ';background:#0d1b29;color:#00f3ff;border:1px solid #00f3ff55'));
+    }
+  }
+
   items.push(mk('🔒 Logout', () => doLogout(), ';background:#ff3b5c;color:#fff'));
   items.push(mk('⚙', () => { const v = prompt('Backend (Apps Script /exec) URL', getUrl()); if (v && v.trim()) { store.set(K.url, v.trim()); location.reload(); } }));
   const minNow = () => store.get(K.pill) !== '0';
@@ -1022,7 +1159,11 @@ $$('[data-at]').forEach(b => b.addEventListener('click', () => { AD.tab = b.data
 $$('[data-f]').forEach(b => b.addEventListener('click', () => { AD.filter = b.dataset.f; $$('[data-f]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
 $('#adQ').addEventListener('input', e => { AD.q = e.target.value.trim(); renderAdmin(); });
 $('#adRef').addEventListener('click', () => loadAdmin());
-$('#adLaunch').addEventListener('click', () => launchStudio());
+$('#adLaunchStudio').addEventListener('click', () => launchApp('studio'));
+$('#adLaunchMaterial').addEventListener('click', () => launchApp('material'));
+$('#btnLaunchStudio').addEventListener('click', () => launchApp('studio'));
+$('#btnLaunchMaterial').addEventListener('click', () => launchApp('material'));
+$('#lncOut').addEventListener('click', () => doLogout());
 $('#adOut').addEventListener('click', () => doLogout());
 $('#adBody').addEventListener('click', async e => {
   const b = e.target.closest('[data-op]'); if (!b) return;
@@ -1141,17 +1282,37 @@ function startBg() {
  * ========================================================================== */
 
 async function resume() {
+  let target = null;
+  try { target = sessionStorage.getItem('dpng_launch_target'); sessionStorage.removeItem('dpng_launch_target'); } catch {}
+
   show('launch'); stepAt(0);
   const fp = await fpP();
   const v = await api('ping');
   if (v.ok) {
     applyVerified(v);
-    if (SESS.role === 'admin') return openAdmin();
-    return launchStudio({ skipVerify: true });
+    const role = SESS.role;
+    if (target === 'material' && (role === 'admin' || role === 'supervisor')) return launchApp('material', { skipVerify: true });
+    if (target === 'studio') return launchApp('studio', { skipVerify: true });
+    if (target === 'admin' && role === 'admin') return openAdmin();
+    if (target === 'launcher' && (role === 'admin' || role === 'supervisor')) return openLauncher();
+
+    // Default role routing
+    if (role === 'admin') return openAdmin();
+    if (role === 'supervisor') return openLauncher();
+    return launchApp('studio', { skipVerify: true });
   }
   if (isNet(v)) {
     // Offline: boot straight from the encrypted cache when still inside the offline grace window.
-    if (withinGrace() && store.get(K.cache)) { const html = await cacheLoad(); if (html) return bootApp(html, true); }
+    if (withinGrace()) {
+      if (target === 'material' && store.get(K.cacheMat)) {
+        const html = await cacheLoad('material');
+        if (html) return bootApp(html, true, 'material');
+      }
+      if (store.get(K.cache)) {
+        const html = await cacheLoad('studio');
+        if (html) return bootApp(html, true, 'studio');
+      }
+    }
     show('auth'); setBanner(withinGrace() ? 'Offline and no encrypted copy is cached. Connect to the internet.' : 'Offline for too long. Connect to the internet and sign in again.', 'bad'); return;
   }
   if (denied(v)) return handleSessionFail(v, fp);
