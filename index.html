@@ -237,7 +237,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
         <div class="err" id="eSet" role="alert"></div>
         <button class="btn primary" id="bSet" type="submit"><span class="spin"></span><span class="lbl">Create Admin</span></button>
       </form>
-      <p class="fine">🔐 This ID will be bound to <b>this device</b>. Location and hardware telemetry are logged for every access attempt.</p>
+      <p class="fine">Device-bound access.</p>
     </section>
 
     <!-- ========== PENDING ========== -->
@@ -278,12 +278,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
     <section class="scr center" data-s="geo">
       <div class="big cy">📍</div>
       <h2>Location Verification Required</h2>
-      <p class="sub">For the security audit, DPNG Job Card can only unlock after high-accuracy GPS is verified on this device.</p>
-      <ul class="guide">
-        <li><b>Android / Chrome:</b> tap the 🔒 icon beside the address → Permissions → Location → Allow.</li>
-        <li><b>iPhone / Safari:</b> Settings → Privacy &amp; Security → Location Services → Safari Websites → While Using.</li>
-        <li><b>Desktop:</b> click the 🔒 icon in the address bar → Site settings → Location → Allow.</li>
-      </ul>
+      <p class="sub">Enable high-accuracy GPS on this device to continue.</p>
       <button class="btn primary" id="geoRetry" type="button"><span class="spin"></span><span class="lbl">Verify Location &amp; Retry</span></button>
       <button class="btn ghost" id="geoBack" type="button">← Back</button>
     </section>
@@ -310,6 +305,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
             <button class="btn sm go" type="button" id="adLaunchStudio">📋 Job Card Studio</button>
             <button class="btn sm go" type="button" id="adLaunchMaterial" style="border-color:rgba(255,0,234,.4);color:#ff00ea">📦 Material &amp; Billing</button>
           </div>
+          <button class="btn sm" type="button" id="adCheckUpdate">🔄 Check for Update</button>
           <button class="btn sm" type="button" id="adOut">🔒 Logout</button>
         </div>
       </div>
@@ -335,16 +331,15 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
       <div class="ad-head">
         <div><h2>Operations Hub</h2><p id="lncWho">—</p></div>
         <div class="ad-actions">
+          <button class="btn sm" type="button" id="lncCheckUpdate">🔄 Check for Update</button>
           <button class="btn sm" type="button" id="lncOut">🔒 Logout</button>
         </div>
       </div>
-      <p class="hub-desc">Select an engineering workspace to launch:</p>
       <div class="hub-grid">
         <div class="hub-card" id="btnLaunchStudio">
           <div class="hub-icon">📋</div>
           <div class="hub-info">
             <h3>DPNG Job Card Studio</h3>
-            <p>Form assignment, feasibility remarks, camera OCR, drawing canvas, PDF generation &amp; GI complete.</p>
           </div>
           <button class="btn go" type="button">🚀 Launch Studio</button>
         </div>
@@ -352,7 +347,6 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
           <div class="hub-icon">📦</div>
           <div class="hub-info">
             <h3>Material &amp; Billing</h3>
-            <p>Meter stock intake, plumber issues/returns, live fitting balances, reconciliation &amp; bill settlements.</p>
           </div>
           <button class="btn go" type="button" style="background:linear-gradient(135deg,#00f3ff,#ff00ea)">📦 Launch Material &amp; Billing</button>
         </div>
@@ -956,11 +950,39 @@ async function doLogout(code) {
   location.reload();
 }
 
+async function checkAppUpdate(target = 'studio', btn = null) {
+  const isMat = target === 'material';
+  const setMsg = msg => { if (btn) btn.textContent = msg; };
+  setMsg('Checking…');
+  const action = isMat ? 'materialApp' : 'app';
+  const r = await api(action, {}, 60000);
+  if (!r.ok || !r.html) {
+    if (denied(r)) return wipeAndLock(kindCode(classify(r)));
+    setMsg(isNet(r) ? 'Offline — baad me try karo' : em(r));
+  } else {
+    const sh = await sha256(r.html);
+    const curSha = isMat ? SESS.matSha : SESS.appSha;
+    if (sh === curSha) {
+      setMsg('Already latest ✓');
+    } else if (!(await cacheStore(r.html, target))) {
+      setMsg('Storage full');
+    } else {
+      if (isMat) { SESS.matSha = sh; if (r.materialUrl) SESS.materialUrl = r.materialUrl; }
+      else { SESS.appSha = sh; }
+      saveSess();
+      setMsg('Updated — reloading…');
+      setTimeout(() => location.reload(), 700);
+      return;
+    }
+  }
+  setTimeout(() => { setMsg('🔄 Check for Update'); }, 2600);
+}
+
 /* Floating control pill inside the loaded DPNG app (inline styles — page CSS is gone after document.write) */
 function addPill(offline, target = 'studio') {
   const old = document.getElementById('dpng-gate-pill'); if (old) old.remove();
   const d = document.createElement('div'); d.id = 'dpng-gate-pill';
-  d.style.cssText = 'position:fixed;right:8px;bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:99999;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 16px);font:12px system-ui,sans-serif';
+  d.style.cssText = 'position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:99999;display:flex;gap:4px;align-items:center;flex-wrap:nowrap;justify-content:flex-end;max-width:calc(100vw - 16px);font:12px system-ui,sans-serif';
   const base = 'border:0;border-radius:14px;padding:6px 10px;background:#00f3ff;color:#021218;font:600 12px system-ui,sans-serif;opacity:.92;cursor:pointer';
   const mk = (txt, fn, css) => { const b = document.createElement('button'); b.textContent = txt; b.style.cssText = base + (css || ''); b.onclick = fn; return b; };
   const items = [];
@@ -977,31 +999,7 @@ function addPill(offline, target = 'studio') {
   }
 
   // Update check
-  const upd = mk('🔄 Check for Update', async () => {
-    upd.textContent = 'Checking…';
-    const action = isMat ? 'materialApp' : 'app';
-    const r = await api(action, {}, 60000);
-    if (!r.ok || !r.html) {
-      if (denied(r)) return wipeAndLock(kindCode(classify(r)));
-      upd.textContent = isNet(r) ? 'Offline — baad me try karo' : em(r);
-    } else {
-      const sh = await sha256(r.html);
-      const curSha = isMat ? SESS.matSha : SESS.appSha;
-      if (sh === curSha) {
-        upd.textContent = 'Already latest ✓';
-      } else if (!(await cacheStore(r.html, target))) {
-        upd.textContent = 'Storage full';
-      } else {
-        if (isMat) { SESS.matSha = sh; if (r.materialUrl) SESS.materialUrl = r.materialUrl; }
-        else { SESS.appSha = sh; }
-        saveSess();
-        upd.textContent = 'Updated — reloading…';
-        setTimeout(() => location.reload(), 700);
-        return;
-      }
-    }
-    setTimeout(() => { upd.textContent = '🔄 Check for Update'; }, 2600);
-  });
+  const upd = mk('🔄 Check for Update', () => checkAppUpdate(target, upd));
   items.push(upd);
 
   // App Switcher for Admin & Supervisor
@@ -1037,10 +1035,12 @@ function addPill(offline, target = 'studio') {
   const tg = mk(minNow() ? '◂' : '▸', () => {
     const min = !minNow(); store.set(K.pill, min ? '1' : '0');
     items.forEach(i => { i.style.display = min ? 'none' : ''; }); tg.textContent = min ? '◂' : '▸';
-  }, ';background:#0d1b29;color:#00f3ff;border:1px solid #00f3ff55');
+  }, ';width:26px;height:26px;min-height:26px;padding:0;display:grid;place-items:center;background:rgba(13,27,41,0.7);color:#00f3ff;border:1px solid #00f3ff44;border-radius:50%;opacity:.75');
   if (minNow()) items.forEach(i => { i.style.display = 'none'; });
   d.append(...items, tg);
   document.body.appendChild(d);
+  window.DPNG_TRIGGER_UPDATE = () => { if (minNow()) tg.click(); upd.click(); };
+  window.DPNG_TOGGLE_PILL = () => { tg.click(); };
 }
 
 /* ============================================================================
@@ -1161,8 +1161,10 @@ $('#adQ').addEventListener('input', e => { AD.q = e.target.value.trim(); renderA
 $('#adRef').addEventListener('click', () => loadAdmin());
 $('#adLaunchStudio').addEventListener('click', () => launchApp('studio'));
 $('#adLaunchMaterial').addEventListener('click', () => launchApp('material'));
+$('#adCheckUpdate').addEventListener('click', () => checkAppUpdate('studio', $('#adCheckUpdate')));
 $('#btnLaunchStudio').addEventListener('click', () => launchApp('studio'));
 $('#btnLaunchMaterial').addEventListener('click', () => launchApp('material'));
+$('#lncCheckUpdate').addEventListener('click', () => checkAppUpdate('studio', $('#lncCheckUpdate')));
 $('#lncOut').addEventListener('click', () => doLogout());
 $('#adOut').addEventListener('click', () => doLogout());
 $('#adBody').addEventListener('click', async e => {
