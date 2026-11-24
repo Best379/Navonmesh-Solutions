@@ -1187,11 +1187,12 @@ async function bridge(target = 'studio') {
   }
 }
 async function bootApp(html, offline, target = 'studio') {
-  stopBg(); stopAdminTimer();
-  await bridge(target);
+  try { stopBg(); } catch (e) {}
+  try { stopAdminTimer(); } catch (e) {}
+  try { await bridge(target); } catch (e) { console.error('bridge error', e); }
   document.open(); document.write(html); document.close();
-  try { addPill(offline, target); } catch (e) { console.error(e); }
-  startHeartbeat();
+  try { addPill(offline, target); } catch (e) { console.error('addPill error', e); }
+  try { startHeartbeat(); } catch (e) { console.error('startHeartbeat error', e); }
 }
 
 function startHeartbeat() {
@@ -1321,10 +1322,11 @@ function addPill(offline, target = 'studio') {
     d.append(...items, tg);
     if (document.body) {
       document.body.appendChild(d);
+      window.DPNG_TRIGGER_UPDATE = () => { if (minNow()) tg.click(); upd.click(); };
+      window.DPNG_TOGGLE_PILL = () => { tg.click(); };
+      return d;
     }
-    window.DPNG_TRIGGER_UPDATE = () => { if (minNow()) tg.click(); upd.click(); };
-    window.DPNG_TOGGLE_PILL = () => { tg.click(); };
-    return d;
+    return null;
   };
 
   attachPill();
