@@ -163,7 +163,160 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 .toast{padding:12px 14px;border-radius:14px;font-size:13.5px;background:rgba(8,15,26,.95);border:1px solid var(--ln);box-shadow:0 8px 30px rgba(0,0,0,.5);animation:inn .3s}
 .toast.bad{border-color:rgba(255,59,92,.6)}.toast.ok{border-color:rgba(0,255,136,.55)}.toast.out{opacity:0;transition:opacity .3s}
 @media(max-width:420px){.card{padding:18px;border-radius:20px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ============================================================================
+ * DPNG MOTION & TACTILE REFRESH / ACTION SYSTEM
+ * Hardware-accelerated (transform & opacity), zero layout shift
+ * ========================================================================== */
+@keyframes dpngSpinLoop {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes dpngGlassShimmer {
+  0% { transform: translateX(-160%) skewX(-20deg); }
+  100% { transform: translateX(260%) skewX(-20deg); }
+}
+@keyframes dpngHaloPulseCyan {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0), inset 0 0 0 1px rgba(0, 243, 255, 0.45); }
+  50% { box-shadow: 0 0 18px 2px rgba(0, 243, 255, 0.4), inset 0 0 0 1px rgba(0, 243, 255, 0.9); }
+}
+@keyframes dpngHaloPulseEmerald {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0), inset 0 0 0 1px rgba(0, 255, 136, 0.45); }
+  50% { box-shadow: 0 0 18px 2px rgba(0, 255, 136, 0.4), inset 0 0 0 1px rgba(0, 255, 136, 0.9); }
+}
+@keyframes dpngHaloPulseMagenta {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 234, 0), inset 0 0 0 1px rgba(255, 0, 234, 0.45); }
+  50% { box-shadow: 0 0 18px 2px rgba(255, 0, 234, 0.4), inset 0 0 0 1px rgba(255, 0, 234, 0.9); }
+}
+@keyframes dpngOrbitalSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes dpngSuccessPop {
+  0% { transform: scale(0.96); filter: brightness(1.2); }
+  45% { transform: scale(1.03); filter: brightness(1.4); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@keyframes dpngErrShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+.dpng-refresh-btn {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  vertical-align: middle;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.4, 1),
+              box-shadow 0.24s cubic-bezier(0.2, 0.8, 0.4, 1),
+              border-color 0.24s ease,
+              background 0.24s ease,
+              color 0.24s ease !important;
+}
+.dpng-refresh-btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.03) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-160%) skewX(-20deg);
+  z-index: 2;
+  will-change: transform, opacity;
+}
+.dpng-refresh-btn::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from 0deg, transparent 0%, var(--halo-color, #00f3ff) 50%, transparent 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+}
+.dpng-refresh-btn.is-refreshing {
+  cursor: wait !important;
+  pointer-events: none !important;
+  border-color: var(--halo-color, rgba(0, 243, 255, 0.7)) !important;
+  animation: dpngHaloPulseCyan 1.6s ease-in-out infinite !important;
+}
+.dpng-refresh-btn.is-refreshing[data-theme="emerald"] {
+  --halo-color: #00ff88;
+  animation: dpngHaloPulseEmerald 1.6s ease-in-out infinite !important;
+}
+.dpng-refresh-btn.is-refreshing[data-theme="magenta"] {
+  --halo-color: #ff00ea;
+  animation: dpngHaloPulseMagenta 1.6s ease-in-out infinite !important;
+}
+.dpng-refresh-btn.is-refreshing::before {
+  opacity: 1;
+  animation: dpngGlassShimmer 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.dpng-refresh-btn.is-refreshing::after {
+  opacity: 0.9;
+  animation: dpngOrbitalSpin 1.8s linear infinite;
+}
+.dpng-refresh-btn .dpng-spin-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  line-height: 1;
+  will-change: transform;
+}
+.dpng-refresh-btn.is-refreshing .dpng-spin-icon {
+  animation: dpngSpinLoop 0.75s linear infinite !important;
+}
+.dpng-refresh-btn .dpng-btn-lbl {
+  display: inline-block;
+  white-space: nowrap;
+  font-weight: inherit;
+}
+.dpng-refresh-btn.is-done {
+  animation: dpngSuccessPop 0.65s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border-color: rgba(0, 255, 136, 0.75) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.45), inset 0 0 8px rgba(0, 255, 136, 0.2) !important;
+}
+.dpng-refresh-btn.is-err {
+  animation: dpngErrShake 0.45s ease-in-out !important;
+  border-color: rgba(255, 59, 92, 0.75) !important;
+  box-shadow: 0 0 18px rgba(255, 59, 92, 0.45), inset 0 0 8px rgba(255, 59, 92, 0.2) !important;
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .dpng-refresh-btn::before,
+  .dpng-refresh-btn::after,
+  .dpng-refresh-btn.is-refreshing .dpng-spin-icon,
+  .dpng-refresh-btn.is-refreshing,
+  .dpng-refresh-btn.is-done,
+  .dpng-refresh-btn.is-err {
+    animation: none !important;
+    transition: none !important;
+  }
+  .dpng-refresh-btn.is-refreshing {
+    opacity: 0.85 !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -596,11 +749,38 @@ async function primeGeo() {
   idle();
 }
 async function refreshGps() {
+  const pill = $('#gpsPill');
+  if (pill) {
+    pill.classList.add('dpng-refresh-btn', 'is-refreshing');
+    pill.dataset.theme = 'cyan';
+  }
   setGps('busy', '📡 Acquiring Satellite Lock...');
-  const g = await getGps();
-  if (g.ok) setGps('ok', `📍 GPS Verified ±${g.acc}m`);
-  else setGps('bad', g.error === 'DENIED' ? '📍 Location denied — enable in browser' : '📡 GPS unavailable');
-  return g;
+  try {
+    const g = await getGps();
+    if (pill) pill.classList.remove('is-refreshing');
+    if (g.ok) {
+      if (pill) {
+        pill.classList.add('is-done');
+        setTimeout(() => pill.classList.remove('is-done'), 650);
+      }
+      setGps('ok', `📍 GPS Verified ±${g.acc}m`);
+    } else {
+      if (pill) {
+        pill.classList.add('is-err');
+        setTimeout(() => pill.classList.remove('is-err'), 750);
+      }
+      setGps('bad', g.error === 'DENIED' ? '📍 Location denied — enable in browser' : '📡 GPS unavailable');
+    }
+    return g;
+  } catch (err) {
+    if (pill) {
+      pill.classList.remove('is-refreshing');
+      pill.classList.add('is-err');
+      setTimeout(() => pill.classList.remove('is-err'), 750);
+    }
+    setGps('bad', '📡 GPS unavailable');
+    return { ok: false, error: 'ERR' };
+  }
 }
 
 
@@ -671,6 +851,98 @@ function show(name) {
   window.scrollTo(0, 0);
 }
 function setBanner(msg, kind = '') { $('#banner').innerHTML = msg ? `<div class="banner ${kind}">${esc(msg)}</div>` : ''; }
+
+/**
+ * Universal Tactile Refresh & Action Animation Runner
+ * Orbital Ring + Sweeping Glass Shimmer + Icon Spin
+ */
+async function runBtnRefresh(btnOrSelector, asyncFn, opts = {}) {
+  const btn = typeof btnOrSelector === 'string' ? document.querySelector(btnOrSelector) : btnOrSelector;
+  if (!btn) {
+    if (typeof asyncFn === 'function') return await asyncFn();
+    return;
+  }
+  if (btn.classList.contains('is-refreshing')) return;
+
+  if (!btn.dataset.origHtml) {
+    btn.dataset.origHtml = btn.innerHTML;
+  }
+  const origHtml = btn.dataset.origHtml;
+
+  const rect = btn.getBoundingClientRect();
+  if (rect.width > 0 && !btn.style.minWidth) {
+    btn.style.minWidth = Math.ceil(rect.width) + 'px';
+  }
+  if (rect.height > 0 && !btn.style.minHeight) {
+    btn.style.minHeight = Math.ceil(rect.height) + 'px';
+  }
+
+  btn.classList.add('dpng-refresh-btn', 'is-refreshing');
+  if (opts.theme) btn.dataset.theme = opts.theme;
+  else if (!btn.dataset.theme) btn.dataset.theme = 'cyan';
+
+  const busyLabel = opts.label || 'Refreshing…';
+  const busyIcon = opts.icon || '🔄';
+
+  btn.innerHTML = `<span class="dpng-spin-icon" aria-hidden="true">${busyIcon}</span><span class="dpng-btn-lbl">${busyLabel}</span>`;
+  btn.setAttribute('aria-busy', 'true');
+
+  let safetyTimer = null;
+  const timeoutMs = opts.timeoutMs || 25000;
+  let outcome = 'done';
+  let result = undefined;
+  let caughtError = null;
+
+  try {
+    const fnPromise = (typeof asyncFn === 'function') ? Promise.resolve(asyncFn(btn)) : Promise.resolve();
+    const timeoutPromise = new Promise((_, reject) => {
+      safetyTimer = setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs);
+    });
+
+    result = await Promise.race([fnPromise, timeoutPromise]);
+    if (result && typeof result === 'object' && result.ok === false) {
+      outcome = 'err';
+    }
+  } catch (err) {
+    outcome = 'err';
+    caughtError = err;
+  } finally {
+    if (safetyTimer) {
+      clearTimeout(safetyTimer);
+      safetyTimer = null;
+    }
+
+    btn.classList.remove('is-refreshing');
+    btn.removeAttribute('aria-busy');
+
+    if (outcome === 'done') {
+      btn.classList.add('is-done');
+      const succLabel = opts.successLabel || 'Refreshed ✓';
+      btn.innerHTML = `<span style="color:var(--em,#00ff88);font-weight:700" aria-hidden="true">✓</span><span class="dpng-btn-lbl">${succLabel}</span>`;
+      
+      const doneDuration = opts.doneDuration || 650;
+      await new Promise(r => setTimeout(r, doneDuration));
+      btn.classList.remove('is-done');
+      btn.innerHTML = btn.dataset.origHtml || origHtml;
+    } else {
+      btn.classList.add('is-err');
+      const errLabel = opts.errorLabel || (caughtError && caughtError.message === 'TIMEOUT' ? 'Timed out' : 'Offline / Error');
+      btn.innerHTML = `<span style="color:var(--cr,#ff3b5c);font-weight:700" aria-hidden="true">⚠</span><span class="dpng-btn-lbl">${errLabel}</span>`;
+      
+      const errDuration = opts.errDuration || 750;
+      await new Promise(r => setTimeout(r, errDuration));
+      btn.classList.remove('is-err');
+      btn.innerHTML = btn.dataset.origHtml || origHtml;
+    }
+  }
+
+  if (caughtError && caughtError.message !== 'TIMEOUT' && opts.rethrow) {
+    throw caughtError;
+  }
+  return result;
+}
+window.runBtnRefresh = runBtnRefresh;
+
 function setBtn(b, label, loading = true) { b.disabled = loading; b.classList.toggle('loading', loading); $('.lbl', b).textContent = label; }
 function switchTab(t) { $('#tabs').dataset.tab = t; $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t)); $('#fIn').hidden = t !== 'in'; $('#fUp').hidden = t !== 'up'; $('#fSet').hidden = true; }
 const V = {
@@ -796,12 +1068,16 @@ document.addEventListener('click', e => {
   const i = $('#' + b.dataset.eye); i.type = i.type === 'password' ? 'text' : 'password';
 });
 ['pBack', 'lkBack', 'blBack', 'geoBack'].forEach(id => $('#' + id).addEventListener('click', () => { PENDING_LOGIN = null; show('auth'); }));
-$('#geoRetry').addEventListener('click', async () => {
-  const b = $('#geoRetry'); setBtn(b, 'Verifying location...');
-  const g = await refreshGps();
-  setBtn(b, 'Verify Location & Retry', false);
-  if (!g.ok) { toast('Location is still unavailable. Enable it in your browser settings.', 'bad', 4500); return; }
-  if (PENDING_LOGIN) { const p = PENDING_LOGIN; show('auth'); await doLogin(p.email, p.password); } else show('auth');
+$('#geoRetry').addEventListener('click', () => {
+  const b = $('#geoRetry');
+  return runBtnRefresh(b, async () => {
+    const g = await refreshGps();
+    if (!g.ok) {
+      toast('Location is still unavailable. Enable it in your browser settings.', 'bad', 4500);
+      throw new Error('GPS_FAILED');
+    }
+    if (PENDING_LOGIN) { const p = PENDING_LOGIN; show('auth'); await doLogin(p.email, p.password); } else show('auth');
+  }, { label: 'Verifying location…', successLabel: 'Verified ✓', errorLabel: 'GPS Unavailable ⚠', theme: 'cyan' });
 });
 $('#gpsPill').addEventListener('click', refreshGps);
 $('#hwPill').addEventListener('click', async () => { const fp = await fpP(); toast('Hardware ID: ' + fp.deviceId.slice(0, 16) + '… · ' + fp.meta.os + ' · ' + fp.meta.browser); });
@@ -944,30 +1220,41 @@ async function doLogout(code) {
 
 async function checkAppUpdate(target = 'studio', btn = null) {
   const isMat = target === 'material';
-  const setMsg = msg => { if (btn) btn.textContent = msg; };
+  const isAnim = btn && btn.classList.contains('is-refreshing');
+  const setMsg = msg => { if (btn && !isAnim) btn.textContent = msg; };
   setMsg('Checking…');
   const action = isMat ? 'materialApp' : 'app';
   const r = await api(action, {}, 60000);
   if (!r.ok || !r.html) {
     if (denied(r)) return wipeAndLock(kindCode(classify(r)));
-    setMsg(isNet(r) ? 'Offline — baad me try karo' : em(r));
+    const msg = isNet(r) ? 'Offline — baad me try karo' : em(r);
+    toast(msg, 'bad');
+    setMsg(msg);
+    if (!isAnim) setTimeout(() => { setMsg('🔄 Check for Update'); }, 2600);
+    return { ok: false, err: msg };
   } else {
     const sh = await sha256(r.html);
     const curSha = isMat ? SESS.matSha : SESS.appSha;
     if (sh === curSha) {
+      toast('App is already latest ✓', 'ok');
       setMsg('Already latest ✓');
+      if (!isAnim) setTimeout(() => { setMsg('🔄 Check for Update'); }, 2600);
+      return { ok: true, status: 'latest' };
     } else if (!(await cacheStore(r.html, target))) {
+      toast('Storage full — could not save offline copy', 'bad');
       setMsg('Storage full');
+      if (!isAnim) setTimeout(() => { setMsg('🔄 Check for Update'); }, 2600);
+      return { ok: false, err: 'Storage full' };
     } else {
       if (isMat) { SESS.matSha = sh; if (r.materialUrl) SESS.materialUrl = r.materialUrl; }
       else { SESS.appSha = sh; }
       saveSess();
+      toast('Updated — reloading…', 'ok');
       setMsg('Updated — reloading…');
       setTimeout(() => location.reload(), 700);
-      return;
+      return { ok: true, status: 'updated' };
     }
   }
-  setTimeout(() => { setMsg('🔄 Check for Update'); }, 2600);
 }
 
 /* Floating control pill inside the loaded DPNG app (inline styles — page CSS is gone after document.write) */
@@ -1167,13 +1454,19 @@ function renderAdmin() {
 $$('[data-at]').forEach(b => b.addEventListener('click', () => { AD.tab = b.dataset.at; $$('[data-at]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
 $$('[data-f]').forEach(b => b.addEventListener('click', () => { AD.filter = b.dataset.f; $$('[data-f]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
 $('#adQ').addEventListener('input', e => { AD.q = e.target.value.trim(); renderAdmin(); });
-$('#adRef').addEventListener('click', () => loadAdmin());
-$('#adLaunchStudio').addEventListener('click', () => launchApp('studio'));
-$('#adLaunchMaterial').addEventListener('click', () => launchApp('material'));
-$('#adCheckUpdate').addEventListener('click', () => checkAppUpdate('studio', $('#adCheckUpdate')));
-$('#btnLaunchStudio').addEventListener('click', () => launchApp('studio'));
-$('#btnLaunchMaterial').addEventListener('click', () => launchApp('material'));
-$('#lncCheckUpdate').addEventListener('click', () => checkAppUpdate('studio', $('#lncCheckUpdate')));
+$('#adRef').addEventListener('click', () => runBtnRefresh('#adRef', () => loadAdmin(), { label: 'Refreshing…', successLabel: 'Refreshed ✓', theme: 'cyan' }));
+$('#adLaunchStudio').addEventListener('click', () => runBtnRefresh('#adLaunchStudio', () => launchApp('studio'), { label: 'Launching…', successLabel: 'Ready 📋', theme: 'cyan' }));
+$('#adLaunchMaterial').addEventListener('click', () => runBtnRefresh('#adLaunchMaterial', () => launchApp('material'), { label: 'Launching…', successLabel: 'Ready 📦', theme: 'magenta' }));
+$('#adCheckUpdate').addEventListener('click', () => runBtnRefresh('#adCheckUpdate', () => checkAppUpdate('studio', $('#adCheckUpdate')), { label: 'Checking…', successLabel: 'Checked ✓', theme: 'cyan' }));
+$('#btnLaunchStudio').addEventListener('click', () => {
+  const b = $('#btnLaunchStudio button') || $('#btnLaunchStudio');
+  runBtnRefresh(b, () => launchApp('studio'), { label: 'Launching…', successLabel: 'Ready 📋', theme: 'cyan' });
+});
+$('#btnLaunchMaterial').addEventListener('click', () => {
+  const b = $('#btnLaunchMaterial button') || $('#btnLaunchMaterial');
+  runBtnRefresh(b, () => launchApp('material'), { label: 'Launching…', successLabel: 'Ready 📦', theme: 'magenta' });
+});
+$('#lncCheckUpdate').addEventListener('click', () => runBtnRefresh('#lncCheckUpdate', () => checkAppUpdate('studio', $('#lncCheckUpdate')), { label: 'Checking…', successLabel: 'Checked ✓', theme: 'cyan' }));
 $('#lncOut').addEventListener('click', () => doLogout());
 $('#adOut').addEventListener('click', () => doLogout());
 $('#adBody').addEventListener('click', async e => {
