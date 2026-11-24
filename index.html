@@ -817,15 +817,17 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
   })();
   function initSplash(){
     const splash=document.getElementById('nsSplashOverlay');if(!splash)return;
-    renderGears();
-    StartupAudio.playVoltageChime();
-    setTimeout(()=>SparkEngine.burst(window.innerWidth/2,window.innerHeight*0.45,34),880);
+    try { renderGears(); } catch(e) {}
+    try { StartupAudio.playVoltageChime(); } catch(e) {}
+    try { setTimeout(()=>SparkEngine.burst(window.innerWidth/2,window.innerHeight*0.45,34),880); } catch(e) {}
     function dismiss(){
       if(splash.classList.contains('is-dismissed'))return;
       splash.classList.add('is-dismissed');
       splash.style.opacity='0';splash.style.pointerEvents='none';
       setTimeout(()=>{try{splash.remove();}catch(e){splash.style.display='none';}},320);
     }
+    // Hard safety timeout fallback ensuring splash always unfreezes even on network failure
+    setTimeout(dismiss, 3000);
     splash.addEventListener('click',dismiss);
     splash.addEventListener('pointerdown',dismiss);
 
@@ -868,6 +870,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
       vid.addEventListener('ended',dismiss);
       vid.addEventListener('error',onVideoFail,true);
       vid.addEventListener('stalled',onVideoFail);
+      vid.addEventListener('abort',onVideoFail);
 
       const sources=vid.querySelectorAll('source');
       sources.forEach(src=>{
@@ -910,7 +913,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
     if(aBtn)aBtn.addEventListener('click',(e)=>{e.stopPropagation();StartupAudio.toggle();});
     const vp=document.getElementById('fusionViewport');
     if(vp)vp.addEventListener('click',(e)=>{
-      e.stopPropagation();SparkEngine.burst(e.clientX||window.innerWidth/2,e.clientY||window.innerHeight*0.45,28);StartupAudio.playShockwavePing();
+      SparkEngine.burst(e.clientX||window.innerWidth/2,e.clientY||window.innerHeight*0.45,28);StartupAudio.playShockwavePing();
     });
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initSplash,{once:true});
@@ -1580,10 +1583,14 @@ async function doLogin(email, password) {
     $('#hwTxt').textContent = fmtHw(fp.deviceId); $('#hwPill').className = 'pill ok';
     setBtn(btn, 'Acquiring Location Telemetry...');
     const geo = await collectTelemetry();
-    if (!geo.gps) { PENDING_LOGIN = { email, password }; show('geo'); return; }   // GPS is mandatory for a legitimate unlock
+    if (!geo.gps && geo.gpsError === 'DENIED') { PENDING_LOGIN = { email, password }; show('geo'); return; }   // Block only if explicitly DENIED
+    if (!geo.gps) {
+      geo.auditTag = 'GPS_UNAVAILABLE_IP_VERIFIED';
+      geo.status = 'GPS_UNAVAILABLE_IP_VERIFIED';
+    }
     setBtn(btn, 'Authenticating...');
     SESS = null;
-    const r = await api('login', { email, password, geo, deviceMeta: fp.meta });
+    const r = await api('login', { email, password, geo, deviceMeta: fp.meta, auditTag: (!geo.gps ? 'GPS_UNAVAILABLE_IP_VERIFIED' : undefined) });
     store.set(K.last, email);
     if (r.ok && r.token) {
       const role = String(r.role || 'plumber').toLowerCase();
@@ -1717,7 +1724,7 @@ async function launchApp(target = 'studio', { skipVerify = false } = {}) {
   const fp = await fpP();
   let offline = false;
   if (!skipVerify) {
-    const v = await api('ping');
+    const v = await api('ping', {}, 4000);
     if (isNet(v)) offline = true;
     else if (denied(v)) return handleSessionFail(v, fp);
     else if (v.ok) applyVerified(v);
@@ -1784,6 +1791,7 @@ async function bridge(target = 'studio') {
   }
 }
 async function bootApp(html, offline, target = 'studio') {
+  try { sessionStorage.setItem('dpng_booted', '1'); } catch (e) {}
   try { stopBg(); } catch (e) {}
   try { stopAdminTimer(); } catch (e) {}
   try { await bridge(target); } catch (e) { console.error('bridge error', e); }
@@ -1805,6 +1813,7 @@ function startHeartbeat() {
 function wipeAndLock(code) {
   clearInterval(HB);
   try { sessionStorage.setItem(K.msg, code); } catch { /* ignore */ }
+  try { sessionStorage.removeItem('dpng_booted'); } catch { /* ignore */ }
   clearSess();
   try { document.documentElement.innerHTML = ''; } catch { /* ignore */ }
   location.reload();
@@ -1812,6 +1821,7 @@ function wipeAndLock(code) {
 async function doLogout(code) {
   clearInterval(HB);
   try { sessionStorage.setItem(K.msg, typeof code === 'string' ? code : 'LOGGED_OUT'); } catch { /* ignore */ }
+  try { sessionStorage.removeItem('dpng_booted'); } catch { /* ignore */ }
   clearSess();
   location.reload();
 }
@@ -2178,7 +2188,7 @@ async function resume() {
 
   show('launch'); stepAt(0);
   const fp = await fpP();
-  const v = await api('ping');
+  const v = await api('ping', {}, 4000);
   if (v.ok) {
     applyVerified(v);
     const role = SESS.role;
