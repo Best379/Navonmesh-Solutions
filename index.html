@@ -813,14 +813,28 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
       if(particles.length>0)rafId=requestAnimationFrame(loop);else rafId=null;
     }
     window.addEventListener('resize',resize);resize();
-    return{burst};
+    function destroy(){
+      window.removeEventListener('resize',resize);
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+      particles=[];
+    }
+    return{burst,destroy};
   })();
   function initSplash(){
     const splash=document.getElementById('nsSplashOverlay');if(!splash)return;
     try { renderGears(); } catch(e) {}
     try { StartupAudio.playVoltageChime(); } catch(e) {}
     try { setTimeout(()=>SparkEngine.burst(window.innerWidth/2,window.innerHeight*0.45,34),880); } catch(e) {}
+    let splashListenersCleaned=false;
+    let cleanupSplashListeners=()=>{};
+    function runSplashCleanup(){
+      if(splashListenersCleaned)return;
+      splashListenersCleaned=true;
+      try{cleanupSplashListeners();}catch(e){}
+      try{SparkEngine.destroy();}catch(e){}
+    }
     function dismiss(){
+      runSplashCleanup();
       if(splash.classList.contains('is-dismissed'))return;
       splash.classList.add('is-dismissed');
       splash.style.opacity='0';splash.style.pointerEvents='none';
@@ -886,6 +900,14 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
         if(mql.addEventListener)mql.addEventListener('change',updateVideoFit);
         else if(mql.addListener)mql.addListener(updateVideoFit);
       }
+      cleanupSplashListeners=()=>{
+        window.removeEventListener('resize',updateVideoFit);
+        window.removeEventListener('orientationchange',updateVideoFit);
+        if(mql){
+          if(mql.removeEventListener)mql.removeEventListener('change',updateVideoFit);
+          else if(mql.removeListener)mql.removeListener(updateVideoFit);
+        }
+      };
 
       setTimeout(()=>{
         if(!videoActive)onVideoFail();
@@ -1132,6 +1154,15 @@ const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, 
 const sha256 = async s => hex(await crypto.subtle.digest('SHA-256', enc.encode(s)));
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const safeJsonParse = (raw, fallback = null) => {
+  if (typeof raw !== 'string' || !raw) return fallback;
+  try {
+    const v = JSON.parse(raw);
+    return v == null ? fallback : v;
+  } catch {
+    return fallback;
+  }
+};
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -1155,13 +1186,14 @@ function toast(msg, kind = 'info', ms = 3400) {
  * SESSION STATE
  * ========================================================================== */
 
-let SESS = null;
-try { SESS = JSON.parse(store.get(K.sess) || 'null'); } catch { SESS = null; }
-let KEY = null, FP = null, HB = 0, ADT = 0, PENDING_LOGIN = null, ADMIN_READY = null;
+let SESS = safeJsonParse(store.get(K.sess), null);
+let KEY = null, FP = null, HB = 0, ADT = 0, HB_BUSY = false, ADT_BUSY = false, PENDING_LOGIN = null, ADMIN_READY = null;
+const ENC_PROOF_MEM = { studio: null, material: null };
 /* app.html keeps its own IndexedDB ('dpng_offline'); on logout we must also wipe the mirrored session/plaintext copies there */
 function offOpen() {
   return new Promise((res, rej) => {
     try {
+      if (typeof indexedDB === 'undefined') { rej(new Error('no_idb')); return; }
       const r = indexedDB.open('dpng_offline', 1);
       r.onupgradeneeded = () => { const x = r.result; if (!x.objectStoreNames.contains('kv')) x.createObjectStore('kv'); if (!x.objectStoreNames.contains('q')) x.createObjectStore('q', { keyPath: 'key' }); };
       r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error('blocked'));
@@ -1171,20 +1203,35 @@ function offOpen() {
 async function offOp(fn) {
   try {
     const db = await offOpen();
-    await new Promise(res => {
-      try { const tx = db.transaction('kv', 'readwrite'); fn(tx.objectStore('kv')); tx.oncomplete = () => { res(); db.close(); }; tx.onerror = tx.onabort = () => { res(); db.close(); }; }
-      catch (e) { res(); db.close(); }
+    return await new Promise(res => {
+      try { const tx = db.transaction('kv', 'readwrite'); fn(tx.objectStore('kv')); tx.oncomplete = () => { res(true); try { db.close(); } catch {} }; tx.onerror = tx.onabort = () => { res(false); try { db.close(); } catch {} }; }
+      catch (e) { res(false); try { db.close(); } catch {} }
     });
-  } catch { /* ignore */ }
+  } catch { return false; }
+}
+async function offGet(k) {
+  try {
+    const db = await offOpen();
+    return await new Promise(res => {
+      let val = null;
+      try {
+        const tx = db.transaction('kv', 'readonly');
+        const g = tx.objectStore('kv').get(k);
+        g.onsuccess = () => { val = g.result ?? null; };
+        tx.oncomplete = () => { res(val); try { db.close(); } catch {} };
+        tx.onerror = tx.onabort = () => { res(null); try { db.close(); } catch {} };
+      } catch (e) { res(null); try { db.close(); } catch {} }
+    });
+  } catch { return null; }
 }
 const offSet = (k, v) => offOp(s => s.put(v, k));
 const offDel = k => offOp(s => s.delete(k));
 const saveSess = () => {
   if (!SESS) { store.del(K.sess); return; }
-  let c = null; try { c = JSON.parse(store.get(K.sess) || 'null'); } catch { c = null; }
+  const c = safeJsonParse(store.get(K.sess), null);
   store.set(K.sess, JSON.stringify(Object.assign({}, c && c.email === SESS.email ? c : {}, SESS, { chk: Date.now() })));
 };
-const clearSess = () => { SESS = null; KEY = null; [K.sess, K.cache, K.cacheMat, 'dpng_app', 'dpng_mat', 'dpng_material_url'].forEach(k => store.del(k)); offDel('dpng_sess'); offDel('dpng_app'); offDel('dpng_mat'); try { sessionStorage.removeItem('dpng_launch_target'); } catch {} };
+const clearSess = () => { SESS = null; KEY = null; ENC_PROOF_MEM.studio = null; ENC_PROOF_MEM.material = null; [K.sess, K.cache, K.cacheMat, 'dpng_app', 'dpng_mat', 'dpng_material_url'].forEach(k => store.del(k)); offDel('dpng_sess'); offDel('dpng_app'); offDel('dpng_mat'); offDel(K.cache); offDel(K.cacheMat); try { sessionStorage.removeItem('dpng_launch_target'); } catch {} };
 
 /* ============================================================================
  * DEVICE FINGERPRINT
@@ -1408,7 +1455,13 @@ async function api(action, extra = {}, ms = 45000) {
     const body = Object.assign({ action, device: fp.deviceId }, SESS && SESS.token ? { token: SESS.token } : {}, extra);
     const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body), signal: ctl.signal });
     const txt = await r.text();
-    try { return JSON.parse(txt); } catch { return { ok: false, code: 'BAD_RESPONSE', err: 'Backend returned an invalid response. Check that the Web App is deployed with access = Anyone.' }; }
+    const j = safeJsonParse(txt, null);
+    if (!r.ok) {
+      if (j && typeof j === 'object') return Object.assign({ ok: false, code: 'HTTP_' + r.status, err: 'Server error (HTTP ' + r.status + ').' }, j, { ok: false });
+      return { ok: false, code: 'HTTP_' + r.status, err: 'Backend returned HTTP ' + r.status + ' (invalid response).' };
+    }
+    if (!j || typeof j !== 'object') return { ok: false, code: 'BAD_RESPONSE', err: 'Backend returned an invalid response. Check that the Web App is deployed with access = Anyone.' };
+    return j;
   } catch (e) {
     return { ok: false, code: 'NETWORK', err: e && e.name === 'AbortError' ? 'Request timed out.' : 'Network unreachable.' };
   } finally { clearTimeout(t); }
@@ -1428,16 +1481,38 @@ async function cacheStore(html, target = 'studio') {
   const cacheKey = target === 'material' ? K.cacheMat : K.cache;
   const key = await getKey(), iv = crypto.getRandomValues(new Uint8Array(12));
   const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(html)));
-  const ok = store.set(cacheKey, JSON.stringify({ v: 1, iv: toB64(iv), ct: toB64(ct), t: Date.now() })); if (!ok) toast('Offline cache could not be saved (storage full).', 'bad'); return ok;
+  const payload = { v: 1, iv: toB64(iv), ct: toB64(ct), t: Date.now() };
+  ENC_PROOF_MEM[target] = payload;
+  const idbOk = await offSet(cacheKey, payload);
+  if (idbOk) {
+    store.del(cacheKey);
+    return true;
+  }
+  const ok = store.set(cacheKey, JSON.stringify(payload));
+  if (!ok) toast('Offline cache could not be saved (storage full).', 'bad');
+  return ok;
 }
 async function cacheLoad(target = 'studio') {
   const cacheKey = target === 'material' ? K.cacheMat : K.cache;
   try {
-    const raw = store.get(cacheKey); if (!raw) return null;
-    const o = JSON.parse(raw), key = await getKey();
+    let o = await offGet(cacheKey);
+    let fromLs = false;
+    if (!o) {
+      const raw = store.get(cacheKey); if (!raw) return null;
+      o = safeJsonParse(raw, null);
+      fromLs = true;
+    } else if (typeof o === 'string') {
+      o = safeJsonParse(o, null);
+    }
+    if (!o || typeof o !== 'object' || typeof o.iv !== 'string' || typeof o.ct !== 'string') throw new Error('BAD_CACHE');
+    const key = await getKey();
     const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(o.iv) }, key, fromB64(o.ct));
+    ENC_PROOF_MEM[target] = o;
+    if (fromLs && (await offSet(cacheKey, o))) {
+      store.del(cacheKey);
+    }
     return new TextDecoder().decode(pt);
-  } catch { store.del(cacheKey); return null; }
+  } catch { store.del(cacheKey); offDel(cacheKey); ENC_PROOF_MEM[target] = null; return null; }
 }
 
 
@@ -1456,90 +1531,96 @@ function setBanner(msg, kind = '') { $('#banner').innerHTML = msg ? `<div class=
  * Universal Tactile Refresh & Action Animation Runner
  * Orbital Ring + Sweeping Glass Shimmer + Icon Spin
  */
+const ACTIVE_REFRESH_BTNS = new WeakSet();
 async function runBtnRefresh(btnOrSelector, asyncFn, opts = {}) {
   const btn = typeof btnOrSelector === 'string' ? document.querySelector(btnOrSelector) : btnOrSelector;
   if (!btn) {
     if (typeof asyncFn === 'function') return await asyncFn();
     return;
   }
-  if (btn.classList.contains('is-refreshing')) return;
-
-  if (!btn.dataset.origHtml) {
-    btn.dataset.origHtml = btn.innerHTML;
-  }
-  const origHtml = btn.dataset.origHtml;
-
-  const rect = btn.getBoundingClientRect();
-  if (rect.width > 0 && !btn.style.minWidth) {
-    btn.style.minWidth = Math.ceil(rect.width) + 'px';
-  }
-  if (rect.height > 0 && !btn.style.minHeight) {
-    btn.style.minHeight = Math.ceil(rect.height) + 'px';
-  }
-
-  btn.classList.add('dpng-refresh-btn', 'is-refreshing');
-  if (opts.theme) btn.dataset.theme = opts.theme;
-  else if (!btn.dataset.theme) btn.dataset.theme = 'cyan';
-
-  const busyLabel = opts.label || 'Refreshing…';
-  const busyIcon = opts.icon || '🔄';
-
-  btn.innerHTML = `<span class="dpng-spin-icon" aria-hidden="true">${busyIcon}</span><span class="dpng-btn-lbl">${busyLabel}</span>`;
-  btn.setAttribute('aria-busy', 'true');
-
-  let safetyTimer = null;
-  const timeoutMs = opts.timeoutMs || 25000;
-  let outcome = 'done';
-  let result = undefined;
-  let caughtError = null;
+  if (ACTIVE_REFRESH_BTNS.has(btn) || btn.classList.contains('is-refreshing')) return;
+  ACTIVE_REFRESH_BTNS.add(btn);
 
   try {
-    const fnPromise = (typeof asyncFn === 'function') ? Promise.resolve(asyncFn(btn)) : Promise.resolve();
-    const timeoutPromise = new Promise((_, reject) => {
-      safetyTimer = setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs);
-    });
+    if (!btn.dataset.origHtml) {
+      btn.dataset.origHtml = btn.innerHTML;
+    }
+    const origHtml = btn.dataset.origHtml;
 
-    result = await Promise.race([fnPromise, timeoutPromise]);
-    if (result && typeof result === 'object' && result.ok === false) {
+    const rect = btn.getBoundingClientRect();
+    if (rect.width > 0 && !btn.style.minWidth) {
+      btn.style.minWidth = Math.ceil(rect.width) + 'px';
+    }
+    if (rect.height > 0 && !btn.style.minHeight) {
+      btn.style.minHeight = Math.ceil(rect.height) + 'px';
+    }
+
+    btn.classList.add('dpng-refresh-btn', 'is-refreshing');
+    if (opts.theme) btn.dataset.theme = opts.theme;
+    else if (!btn.dataset.theme) btn.dataset.theme = 'cyan';
+
+    const busyLabel = opts.label || 'Refreshing…';
+    const busyIcon = opts.icon || '🔄';
+
+    btn.innerHTML = `<span class="dpng-spin-icon" aria-hidden="true">${busyIcon}</span><span class="dpng-btn-lbl">${busyLabel}</span>`;
+    btn.setAttribute('aria-busy', 'true');
+
+    let safetyTimer = null;
+    const timeoutMs = opts.timeoutMs || 25000;
+    let outcome = 'done';
+    let result = undefined;
+    let caughtError = null;
+
+    try {
+      const fnPromise = (typeof asyncFn === 'function') ? Promise.resolve(asyncFn(btn)) : Promise.resolve();
+      const timeoutPromise = new Promise((_, reject) => {
+        safetyTimer = setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs);
+      });
+
+      result = await Promise.race([fnPromise, timeoutPromise]);
+      if (result && typeof result === 'object' && result.ok === false) {
+        outcome = 'err';
+      }
+    } catch (err) {
       outcome = 'err';
+      caughtError = err;
+    } finally {
+      if (safetyTimer) {
+        clearTimeout(safetyTimer);
+        safetyTimer = null;
+      }
+
+      btn.classList.remove('is-refreshing');
+      btn.removeAttribute('aria-busy');
+
+      if (outcome === 'done') {
+        btn.classList.add('is-done');
+        const succLabel = opts.successLabel || 'Refreshed ✓';
+        btn.innerHTML = `<span style="color:var(--em,#00ff88);font-weight:700" aria-hidden="true">✓</span><span class="dpng-btn-lbl">${succLabel}</span>`;
+        
+        const doneDuration = opts.doneDuration || 650;
+        await new Promise(r => setTimeout(r, doneDuration));
+        btn.classList.remove('is-done');
+        btn.innerHTML = btn.dataset.origHtml || origHtml;
+      } else {
+        btn.classList.add('is-err');
+        const errLabel = opts.errorLabel || (caughtError && caughtError.message === 'TIMEOUT' ? 'Timed out' : 'Offline / Error');
+        btn.innerHTML = `<span style="color:var(--cr,#ff3b5c);font-weight:700" aria-hidden="true">⚠</span><span class="dpng-btn-lbl">${errLabel}</span>`;
+        
+        const errDuration = opts.errDuration || 750;
+        await new Promise(r => setTimeout(r, errDuration));
+        btn.classList.remove('is-err');
+        btn.innerHTML = btn.dataset.origHtml || origHtml;
+      }
     }
-  } catch (err) {
-    outcome = 'err';
-    caughtError = err;
+
+    if (caughtError && caughtError.message !== 'TIMEOUT' && opts.rethrow) {
+      throw caughtError;
+    }
+    return result;
   } finally {
-    if (safetyTimer) {
-      clearTimeout(safetyTimer);
-      safetyTimer = null;
-    }
-
-    btn.classList.remove('is-refreshing');
-    btn.removeAttribute('aria-busy');
-
-    if (outcome === 'done') {
-      btn.classList.add('is-done');
-      const succLabel = opts.successLabel || 'Refreshed ✓';
-      btn.innerHTML = `<span style="color:var(--em,#00ff88);font-weight:700" aria-hidden="true">✓</span><span class="dpng-btn-lbl">${succLabel}</span>`;
-      
-      const doneDuration = opts.doneDuration || 650;
-      await new Promise(r => setTimeout(r, doneDuration));
-      btn.classList.remove('is-done');
-      btn.innerHTML = btn.dataset.origHtml || origHtml;
-    } else {
-      btn.classList.add('is-err');
-      const errLabel = opts.errorLabel || (caughtError && caughtError.message === 'TIMEOUT' ? 'Timed out' : 'Offline / Error');
-      btn.innerHTML = `<span style="color:var(--cr,#ff3b5c);font-weight:700" aria-hidden="true">⚠</span><span class="dpng-btn-lbl">${errLabel}</span>`;
-      
-      const errDuration = opts.errDuration || 750;
-      await new Promise(r => setTimeout(r, errDuration));
-      btn.classList.remove('is-err');
-      btn.innerHTML = btn.dataset.origHtml || origHtml;
-    }
+    ACTIVE_REFRESH_BTNS.delete(btn);
   }
-
-  if (caughtError && caughtError.message !== 'TIMEOUT' && opts.rethrow) {
-    throw caughtError;
-  }
-  return result;
 }
 window.runBtnRefresh = runBtnRefresh;
 
@@ -1595,7 +1676,7 @@ async function doLogin(email, password) {
     if (r.ok && r.token) {
       const role = String(r.role || 'plumber').toLowerCase();
       SESS = { email, name: r.name || '', role, refId: r.refId || '', token: r.token, exp: r.exp || null, verifiedAt: Date.now(), chk: Date.now(), appSha: '', matSha: '', materialUrl: '' };
-      KEY = null; store.del(K.cache); store.del(K.cacheMat); saveSess(); PENDING_LOGIN = null;
+      KEY = null; ENC_PROOF_MEM.studio = null; ENC_PROOF_MEM.material = null; store.del(K.cache); store.del(K.cacheMat); offDel(K.cache); offDel(K.cacheMat); saveSess(); PENDING_LOGIN = null;
       $('#inPw').value = '';
       if (role === 'admin') { setBtn(btn, 'Opening Command Center...'); await openAdmin(); }
       else if (role === 'supervisor') { setBtn(btn, 'Opening Operations Hub...'); openLauncher(); }
@@ -1776,7 +1857,7 @@ async function bridge(target = 'studio') {
     appSha: s.appSha || '', matSha: s.matSha || '', currentApp: target
   }));
   try {
-    const p = JSON.parse(store.get(K.prefs) || '{}') || {};
+    const p = safeJsonParse(store.get(K.prefs), {}) || {};
     p.url = getUrl();
     store.set(K.prefs, JSON.stringify(p));
   } catch {}
@@ -1785,6 +1866,10 @@ async function bridge(target = 'studio') {
   window.DPNG_URL = getUrl();
   window.DPNG_LOGOUT = doLogout;
   window.DPNG_CURRENT_APP = target;
+  const cacheKey = target === 'material' ? K.cacheMat : K.cache;
+  let encProof = ENC_PROOF_MEM[target] || await offGet(cacheKey) || safeJsonParse(store.get(cacheKey), null);
+  if (typeof encProof === 'string') encProof = safeJsonParse(encProof, null);
+  window.DPNG_ENC_PROOF = encProof || null;
   if (s.materialUrl) {
     window.DPNG_MATERIAL_URL = s.materialUrl;
     store.set('dpng_material_url', s.materialUrl);
@@ -1802,16 +1887,22 @@ async function bootApp(html, offline, target = 'studio') {
 
 function startHeartbeat() {
   clearInterval(HB);
+  HB_BUSY = false;
   HB = setInterval(async () => {
-    if (!SESS) return;
-    const r = await api('ping');
-    if (r.ok) applyVerified(r);
-    else if (isNet(r)) { if (!withinGrace()) wipeAndLock('OFFLINE_EXPIRED'); }
-    else if (denied(r)) wipeAndLock(kindCode(classify(r)));
+    if (!SESS || HB_BUSY) return;
+    HB_BUSY = true;
+    try {
+      const r = await api('ping');
+      if (r.ok) applyVerified(r);
+      else if (isNet(r)) { if (!withinGrace()) wipeAndLock('OFFLINE_EXPIRED'); }
+      else if (denied(r)) wipeAndLock(kindCode(classify(r)));
+    } finally {
+      HB_BUSY = false;
+    }
   }, CONFIG.HEARTBEAT_MS);
 }
 function wipeAndLock(code) {
-  clearInterval(HB);
+  clearInterval(HB); HB_BUSY = false;
   try { sessionStorage.setItem(K.msg, code); } catch { /* ignore */ }
   try { sessionStorage.removeItem('dpng_booted'); } catch { /* ignore */ }
   clearSess();
@@ -1819,7 +1910,7 @@ function wipeAndLock(code) {
   location.reload();
 }
 async function doLogout(code) {
-  clearInterval(HB);
+  clearInterval(HB); HB_BUSY = false;
   try { sessionStorage.setItem(K.msg, typeof code === 'string' ? code : 'LOGGED_OUT'); } catch { /* ignore */ }
   try { sessionStorage.removeItem('dpng_booted'); } catch { /* ignore */ }
   clearSess();
@@ -1931,6 +2022,7 @@ function addPill(offline, target = 'studio') {
       document.body.appendChild(d);
       window.DPNG_TRIGGER_UPDATE = () => { if (minNow()) tg.click(); upd.click(); };
       window.DPNG_TOGGLE_PILL = () => { tg.click(); };
+      try { window.dispatchEvent(new CustomEvent('dpng-pill-ready')); } catch { window.dispatchEvent(new Event('dpng-pill-ready')); }
       return d;
     }
     return null;
@@ -1959,20 +2051,29 @@ const EV = {
 };
 const GRP = { all: null, bad: ['DEVICE_MISMATCH', 'WRONG_PASSWORD', 'BLOCKED_ATTEMPT', 'TOO_MANY_ATTEMPTS'], ok: ['APP_ACCESS'], pend: ['SIGNUP', 'PENDING_ATTEMPT'] };
 
-function stopAdminTimer() { clearInterval(ADT); ADT = 0; }
+function stopAdminTimer() { clearInterval(ADT); ADT = 0; ADT_BUSY = false; }
 async function openAdmin() {
   show('admin');
   $('#adWho').textContent = `${SESS.name || 'Administrator'} · ${SESS.email}`;
   await loadAdmin();
   stopAdminTimer();
-  ADT = setInterval(() => { if (!document.hidden && $('.scr.on') && $('.scr.on').dataset.s === 'admin') loadAdmin(true); }, 30000);
+  ADT = setInterval(async () => {
+    if (ADT_BUSY || AD.busy || document.hidden || !($('.scr.on') && $('.scr.on').dataset.s === 'admin')) return;
+    ADT_BUSY = true;
+    try { await loadAdmin(true); }
+    finally { ADT_BUSY = false; }
+  }, 30000);
 }
 const stNorm = s => { s = String(s || '').toLowerCase(); return s === 'approved' ? 'active' : s; };
 async function loadAdmin(silent) {
   if (AD.busy) return; AD.busy = true;
   if (!silent) $('#adBody').innerHTML = '<div class="empty">Loading security data…</div>';
-  const [u, a] = await Promise.all([api('users'), api('auditLogs')]);
-  AD.busy = false;
+  let u, a;
+  try {
+    [u, a] = await Promise.all([api('users'), api('auditLogs')]);
+  } finally {
+    AD.busy = false;
+  }
   if (!u.ok) {
     if (denied(u)) return handleSessionFail(u);
     if (!silent) $('#adBody').innerHTML = `<div class="empty">${esc(em(u))}</div>`;
@@ -2005,7 +2106,7 @@ const stBadge = s => { const n = stNorm(s); return `<span class="bdg ${n === 'ac
 const roleBadge = r => { r = String(r || '').toLowerCase(); return `<span class="bdg ${r === 'admin' ? 'mag' : r === 'supervisor' ? 'cyan' : 'green'}">${esc(r.toUpperCase() || 'USER')}</span>`; };
 const devChip = m => m && (m.os || m.browser) ? `<span class="chipd">${esc(m.browser || '?')} · ${esc(m.os || '?')}</span>` : '';
 const shortDev = d => { d = String(d || ''); return /^[a-f0-9]{64}$/i.test(d) ? d.slice(0, 8) + '••••' + d.slice(-4) : d.slice(0, 12); };
-const metaOf = u => { let m = u.deviceMeta || u.boundDeviceMeta || {}; if (typeof m === 'string') { try { m = JSON.parse(m); } catch { m = {}; } } return m; };
+const metaOf = u => { let m = u.deviceMeta || u.boundDeviceMeta || {}; if (typeof m === 'string') { m = safeJsonParse(m, {}) || {}; } return m; };
 
 function userRows() {
   const q = AD.q.toLowerCase();
@@ -2043,7 +2144,7 @@ function logRows() {
   if (!list.length) return '<div class="empty">No audit events match this filter.</div>';
   const rows = list.map(l => {
     const ev = EV[l.event] || ['cyan', l.event];
-    let m = {}; try { m = JSON.parse(l.deviceMeta || '{}'); } catch { /* ignore */ }
+    const m = safeJsonParse(l.deviceMeta, {}) || {};
     return `<tr>
       <td data-l="Timestamp (IST)"><div class="mono">${esc(l.tsIST || (l.tsISO ? ist(l.tsISO) : ''))}</div><div class="sm">${esc(ago(l.tsISO))}</div></td>
       <td data-l="User">${esc(l.email || '—')}</td>
@@ -2205,14 +2306,12 @@ async function resume() {
   if (isNet(v)) {
     // Offline: boot straight from the encrypted cache when still inside the offline grace window.
     if (withinGrace()) {
-      if (target === 'material' && store.get(K.cacheMat)) {
+      if (target === 'material') {
         const html = await cacheLoad('material');
         if (html) return bootApp(html, true, 'material');
       }
-      if (store.get(K.cache)) {
-        const html = await cacheLoad('studio');
-        if (html) return bootApp(html, true, 'studio');
-      }
+      const html = await cacheLoad('studio');
+      if (html) return bootApp(html, true, 'studio');
     }
     show('auth'); setBanner(withinGrace() ? 'Offline and no encrypted copy is cached. Connect to the internet.' : 'Offline for too long. Connect to the internet and sign in again.', 'bad'); return;
   }
