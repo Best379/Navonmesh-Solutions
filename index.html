@@ -99,6 +99,15 @@
   --tx:#e8f6ff;--mut:#8fa6b8;--ln:rgba(0,243,255,.28);--glass:rgba(8,15,26,.72);
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --ease-spring-snappy:cubic-bezier(0.34,1.45,0.64,1);
+  --ease-spring-bouncy:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-spring-drawer:cubic-bezier(0.22,1.24,0.36,1);
+}
+@supports (animation-timing-function: linear(0, 1)){
+  :root{
+    --ease-spring-snappy:linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 17.7%, 1.046 22.9%, 1.078 27.1%, 1.069 32.5%, 1.016 44.3%, 0.996 54.8%, 0.997 69.2%, 1);
+    --ease-spring-bouncy:linear(0, 0.007, 0.027 2.2%, 0.109 4.6%, 0.427 10.1%, 0.793 16%, 1.031 22.1%, 1.119 27.6%, 1.11 33.4%, 1.028 43%, 0.985 52.3%, 0.984 61.5%, 1.002 78.6%, 1);
+  }
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased;text-size-adjust:100%}
@@ -110,7 +119,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 .card{position:relative;width:100%;max-width:440px;border-radius:24px;padding:22px;background:var(--glass);
   backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
   box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(0,243,255,.08),inset 0 1px 0 rgba(255,255,255,.05);
-  transition:max-width .55s cubic-bezier(.22,1,.36,1)}
+  overflow:hidden}
 .card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
   background:linear-gradient(140deg,rgba(0,243,255,.62),rgba(0,243,255,.08) 35%,rgba(255,0,234,.08) 65%,rgba(255,0,234,.5));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
@@ -122,15 +131,18 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 .brand p{margin:2px 0 0;font-size:11.5px;color:var(--mut);line-height:1.3}
 .brand .grow{flex:1;min-width:0}
 .status-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px}
-.pill{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 11px;border-radius:999px;border:1px solid var(--ln);background:rgba(0,243,255,.05);color:var(--tx);font:600 11.5px var(--mono);cursor:pointer;max-width:100%}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 11px;border-radius:999px;border:1px solid var(--ln);background:rgba(0,243,255,.05);color:var(--tx);font:600 11.5px var(--mono);cursor:pointer;max-width:100%;transition-property:transform,opacity,background-color,border-color;transition-duration:.2s;transition-timing-function:var(--ease-spring-snappy)}
+.pill:active{transform:scale(.96)}
 .pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pill .dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--am);color:var(--am);box-shadow:0 0 8px currentColor}
 .pill.ok .dot{background:var(--em);color:var(--em)}.pill.bad .dot{background:var(--cr);color:var(--cr)}
 .pill.busy .dot{animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.25;transform:scale(1.5)}}
 @keyframes rot{to{transform:rotate(360deg)}}
-@keyframes inn{from{opacity:0;transform:translateY(10px)}}
-.scr{display:none}.scr.on{display:block;animation:inn .4s cubic-bezier(.22,1,.36,1)}
+@keyframes inn{from{opacity:0;transform:translate3d(0,12px,0) scale(.985)}to{opacity:1;transform:none}}
+@keyframes scrOut{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,-8px,0) scale(.985)}}
+.scr{display:none;will-change:transform,opacity}.scr.on{display:block;animation:inn .34s var(--ease-spring-drawer) backwards}
+.scr.leaving{display:block;position:absolute;left:22px;right:22px;pointer-events:none;animation:scrOut .18s cubic-bezier(.4,0,1,1) forwards}
 .tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
 .tabs .slider{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:10px;background:linear-gradient(135deg,rgba(0,243,255,.25),rgba(255,0,234,.18));border:1px solid var(--ln);transition:transform .35s cubic-bezier(.22,1,.36,1)}
 .tabs[data-tab=up] .slider{transform:translateX(100%)}
@@ -142,8 +154,8 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 .fld{position:relative;margin:14px 0 0}
 .fld .ic{position:absolute;left:14px;top:26px;translate:0 -50%;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--mut);transition:color .2s;pointer-events:none}
 .fld input{width:100%;height:52px;padding:18px 46px 4px 44px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(5,10,18,.6);color:var(--tx);font:16px var(--sans);outline:0;transition:border-color .2s,box-shadow .2s}
-.fld .fl{position:absolute;left:44px;top:26px;translate:0 -50%;color:var(--mut);font-size:14px;pointer-events:none;transition:all .18s ease}
-.fld input:focus+.fl,.fld input:not(:placeholder-shown)+.fl,.fld input:-webkit-autofill+.fl{top:14px;font-size:11px;color:var(--cy)}
+.fld .fl{position:absolute;left:44px;top:17px;color:var(--mut);font-size:14px;line-height:1.25;transform-origin:left top;transform:translate3d(0,0,0) scale(1);pointer-events:none;transition-property:transform,opacity,background-color,border-color,color;transition-duration:.2s;transition-timing-function:var(--ease-spring-snappy)}
+.fld input:focus+.fl,.fld input:not(:placeholder-shown)+.fl,.fld input:-webkit-autofill+.fl{transform:translate3d(0,-10px,0) scale(.786);color:var(--cy)}
 .fld input:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(0,243,255,.14),0 0 22px rgba(0,243,255,.18)}
 .fld:focus-within .ic{color:var(--cy)}
 .fld.ok input{border-color:rgba(0,255,136,.5)}.fld.bad input{border-color:rgba(255,59,92,.6)}
@@ -153,11 +165,11 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 .hint{font-size:12px;color:var(--cr);margin:5px 4px 0;min-height:0}
 .hint:empty{display:none}
 .meter{height:4px;border-radius:4px;background:rgba(255,255,255,.07);margin:8px 2px 0;overflow:hidden}
-.meter i{display:block;height:100%;width:0;border-radius:4px;background:var(--cr);transition:width .3s,background .3s}
-.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;margin-top:18px;padding:0 16px;border-radius:14px;border:1px solid var(--ln);background:rgba(255,255,255,.04);color:var(--tx);font:700 15px var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .25s,filter .2s}
+.meter i{display:block;height:100%;width:100%;border-radius:4px;background:var(--cr);transform-origin:left center;transform:scaleX(0);transition:transform .3s var(--ease-spring-snappy),background-color .3s ease}
+.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;margin-top:18px;padding:0 16px;border-radius:14px;border:1px solid var(--ln);background:rgba(255,255,255,.04);color:var(--tx);font:700 15px var(--sans);cursor:pointer;text-decoration:none;transition-property:transform,opacity,background-color,border-color,box-shadow;transition-duration:.2s;transition-timing-function:var(--ease-spring-snappy)}
 .btn.primary{background:linear-gradient(135deg,#00f3ff,#19b9d6 55%,#7aa8ff);color:#021218;border-color:transparent;box-shadow:0 8px 28px rgba(0,243,255,.28)}
 .btn.primary:hover{box-shadow:0 10px 36px rgba(0,243,255,.45)}
-.btn:hover{transform:translateY(-1px)}.btn:active{transform:scale(.985)}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:scale(.96)}
 .btn[disabled]{opacity:.75;cursor:progress;transform:none}
 .btn .spin{display:none;width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:rot .7s linear infinite}
 .btn.loading .spin{display:inline-block}
@@ -179,7 +191,7 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 .kv span{color:var(--mut)}.kv b{font:600 12px var(--mono);text-align:right;word-break:break-all}
 .lockbox{margin-top:16px;padding:14px;border-radius:14px;text-align:left;font-size:13.5px;line-height:1.55;color:#ffd5db;background:rgba(255,59,92,.09);border:1px solid rgba(255,59,92,.5);box-shadow:0 0 30px rgba(255,59,92,.14)}
 .steps{list-style:none;margin:20px 0 0;padding:0;text-align:left;display:grid;gap:10px}
-.steps li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);color:var(--mut);font-size:13.5px;transition:all .3s}
+.steps li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);color:var(--mut);font-size:13.5px;transition:background-color .3s,border-color .3s,color .3s}
 .steps li i{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-style:normal;font-size:12px}
 .steps li.act{color:var(--cy);border-color:var(--ln);background:rgba(0,243,255,.06)}
 .steps li.act i{border-right-color:transparent;animation:rot .8s linear infinite}
@@ -202,10 +214,13 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
 @keyframes glowA{50%{box-shadow:0 0 24px rgba(255,238,0,.3)}}
 .ad-tabs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
 .ad-tabs .sp{flex:1}
-.ad-tabs input{height:40px;min-width:180px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(5,10,18,.6);color:var(--tx);font:14px var(--sans);outline:0}
-.ad-tabs input:focus{border-color:var(--cy)}
-.chip{min-height:40px;padding:0 13px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--mut);font:600 13px var(--sans);cursor:pointer}
-.chip.on{color:var(--tx);border-color:var(--ln);background:rgba(0,243,255,.12)}
+.ad-tabs input{height:40px;min-width:180px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(5,10,18,.6);color:var(--tx);font:14px var(--sans);outline:0;transition:border-color .2s ease,box-shadow .26s var(--ease-spring-snappy),transform .24s var(--ease-spring-snappy)}
+.ad-tabs input:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(0,243,255,.14),0 0 18px rgba(0,243,255,.16);transform:translate3d(0,-1px,0)}
+.chip{min-height:40px;padding:0 13px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--mut);font:600 13px var(--sans);cursor:pointer;transition-property:transform,opacity,background-color,border-color,color,box-shadow;transition-duration:.22s;transition-timing-function:var(--ease-spring-snappy)}
+.chip:active{transform:scale(.96)}
+.chip.on{color:var(--tx);border-color:var(--ln);background:rgba(0,243,255,.12);box-shadow:0 0 14px rgba(0,243,255,.16)}
+#adChips:not([hidden]){animation:inn .26s var(--ease-spring-drawer) backwards}
+#adBody{will-change:transform,opacity}
 .twrap{overflow-x:auto;border-radius:16px;border:1px solid rgba(255,255,255,.07)}
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
 .tbl th{position:sticky;top:0;text-align:left;padding:11px 12px;font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);background:rgba(5,10,18,.9);border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap}
@@ -231,16 +246,21 @@ html,body{margin:0;min-height:100%;background:var(--bg2);color:var(--tx);font:15
   .ad-tabs input{flex:1 1 100%}
 }
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:12px}
-.hub-card{padding:20px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px;transition:all .2s ease;cursor:pointer}
-.hub-card:hover{background:rgba(0,243,255,.05);border-color:var(--ln);box-shadow:0 0 25px rgba(0,243,255,.12);translate:0 -2px}
+.hub-card{padding:20px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px;transition-property:transform,opacity,background-color,border-color;transition-duration:.22s;transition-timing-function:var(--ease-spring-snappy);cursor:pointer}
+.hub-card:hover{background:rgba(0,243,255,.05);border-color:var(--ln);box-shadow:0 0 25px rgba(0,243,255,.12);transform:translate3d(0,-2px,0)}
+.hub-card:active{transform:scale(.96)}
 .hub-icon{font-size:32px;line-height:1}
 .hub-info h3{margin:0 0 4px;font-size:17px;color:var(--tx)}
 .hub-info p{margin:0;font-size:13px;color:var(--mut);line-height:1.4}
 .hub-card .btn{margin-top:auto}
 /* ---------- overlays ---------- */
-#modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,5,10,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-#modal.on{display:flex;animation:inn .25s}
-.mbox{width:100%;max-width:440px;max-height:90vh;overflow:auto;padding:20px;border-radius:20px;background:rgba(8,15,26,.95);border:1px solid var(--ln);box-shadow:0 0 50px rgba(0,243,255,.18)}
+#modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,5,10,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;will-change:opacity;transition:opacity .22s ease}
+#modal.is-open{display:flex}
+#modal.on{display:flex;opacity:1;pointer-events:auto}
+#modal.closing{display:flex;opacity:0;pointer-events:none;transition:opacity .18s ease}
+.mbox{width:100%;max-width:440px;max-height:90vh;overflow:auto;padding:20px;border-radius:20px;background:rgba(8,15,26,.95);border:1px solid var(--ln);box-shadow:0 0 50px rgba(0,243,255,.18);will-change:transform,opacity;transform:translate3d(0,18px,0) scale(.94);opacity:0;transition:transform .34s var(--ease-spring-bouncy),opacity .22s ease}
+#modal.on .mbox{transform:translate3d(0,0,0) scale(1);opacity:1}
+#modal.closing .mbox{transform:translate3d(0,10px,0) scale(.96);opacity:0;transition:transform .18s cubic-bezier(.4,0,1,1),opacity .16s ease}
 .mbox h3{margin:0 0 6px;font-size:17px}.mbox p{margin:0;color:var(--mut);font-size:13.5px}
 .mbox .row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.mbox .row .btn{flex:1;margin:0}
 .mbox input{width:100%;height:48px;margin-top:12px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(5,10,18,.7);color:var(--tx);font:14px var(--mono);outline:0}
@@ -1520,8 +1540,42 @@ async function cacheLoad(target = 'studio') {
  * SCREEN + FORM HELPERS
  * ========================================================================== */
 function show(name) {
-  $$('.scr').forEach(s => s.classList.toggle('on', s.dataset.s === name));
-  $('#card').classList.toggle('wide', name === 'admin' || name === 'launcher');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrs = $$('.scr');
+  const prev = scrs.find(s => s.classList.contains('on'));
+  const next = scrs.find(s => s.dataset.s === name);
+
+  scrs.forEach(s => {
+    if (s._leaveT) { clearTimeout(s._leaveT); s._leaveT = 0; }
+    s.classList.remove('leaving');
+    s.style.top = '';
+  });
+
+  const prevTop = (prev && next && prev !== next && !reduce) ? prev.offsetTop : 0;
+  scrs.forEach(s => s.classList.toggle('on', s.dataset.s === name));
+
+  const card = $('#card');
+  const wantWide = name === 'admin' || name === 'launcher';
+  const wasWide = card.classList.contains('wide');
+  card.classList.toggle('wide', wantWide);
+  if (!reduce && wasWide !== wantWide && typeof card.animate === 'function') {
+    card.getAnimations().forEach(a => a.cancel());
+    card.animate(
+      [{ opacity: 0.88, transform: 'translate3d(0, 8px, 0) scale(0.975)' }, { opacity: 1, transform: 'none' }],
+      { duration: 360, easing: 'cubic-bezier(0.22, 1.24, 0.36, 1)' }
+    );
+  }
+
+  if (prev && next && prev !== next && !reduce) {
+    prev.style.top = prevTop + 'px';
+    prev.classList.add('leaving');
+    prev._leaveT = setTimeout(() => {
+      prev.classList.remove('leaving');
+      prev.style.top = '';
+      prev._leaveT = 0;
+    }, 190);
+  }
+
   if (name !== 'admin') stopAdminTimer();
   window.scrollTo(0, 0);
 }
@@ -1705,7 +1759,7 @@ $('#upEmail').addEventListener('input', e => mark('gUpE', 'hUpE', e.target.value
 $('#upPhone').addEventListener('input', e => mark('gUpM', 'hUpM', e.target.value ? V.phone(e.target.value) : null, 'Enter 4–24 letters, digits or - / + characters.'));
 $('#upPw').addEventListener('input', e => {
   const v = e.target.value, s = strength(v), m = $('#meter');
-  m.style.width = (s * 20) + '%'; m.style.background = s <= 2 ? 'var(--cr)' : s === 3 ? 'var(--am)' : 'var(--em)';
+  m.style.transform = 'scaleX(' + (s * 0.2) + ')'; m.style.background = s <= 2 ? 'var(--cr)' : s === 3 ? 'var(--am)' : 'var(--em)';
   mark('gUpP', 'hUpP', v ? V.pw(v) : null, 'Min 8 characters with upper-case, lower-case and a digit.');
 });
 $('#fUp').addEventListener('submit', async e => {
@@ -2055,7 +2109,9 @@ function stopAdminTimer() { clearInterval(ADT); ADT = 0; ADT_BUSY = false; }
 async function openAdmin() {
   show('admin');
   $('#adWho').textContent = `${SESS.name || 'Administrator'} · ${SESS.email}`;
-  await loadAdmin();
+  const hasCached = AD.users.length > 0 || AD.logs.length > 0;
+  if (hasCached) renderAdmin();
+  await loadAdmin(hasCached);
   stopAdminTimer();
   ADT = setInterval(async () => {
     if (ADT_BUSY || AD.busy || document.hidden || !($('.scr.on') && $('.scr.on').dataset.s === 'admin')) return;
@@ -2067,29 +2123,37 @@ async function openAdmin() {
 const stNorm = s => { s = String(s || '').toLowerCase(); return s === 'approved' ? 'active' : s; };
 async function loadAdmin(silent) {
   if (AD.busy) return; AD.busy = true;
-  if (!silent) $('#adBody').innerHTML = '<div class="empty">Loading security data…</div>';
-  let u, a;
+  if (!silent && !AD.users.length) $('#adBody').innerHTML = '<div class="empty">Loading security data…</div>';
   try {
-    [u, a] = await Promise.all([api('users'), api('auditLogs')]);
+    // Serialize users -> auditLogs so GAS LockService does not contend on simultaneous calls
+    const u = await api('users');
+    if (!u.ok) {
+      if (denied(u)) return handleSessionFail(u);
+      if (!silent && !AD.users.length) $('#adBody').innerHTML = `<div class="empty">${esc(em(u))}</div>`;
+      return;
+    }
+    AD.users = u.users || [];
+    const dayAgo = Date.now() - 86400000;
+    AD.kpi = {
+      total: AD.users.length,
+      pending: AD.users.filter(x => stNorm(x.status) === 'pending').length,
+      activeDevices: AD.users.filter(x => stNorm(x.status) === 'active' && x.device).length,
+      suspicious24h: AD.logs.filter(l => GRP.bad.includes(l.event) && Date.parse(l.tsISO) >= dayAgo).length
+    };
+    renderKpi();
+    if (AD.tab === 'users' || AD.logs.length) $('#adBody').innerHTML = AD.tab === 'users' ? userRows() : logRows();
+
+    // Light stagger before requesting auditLogs so the backend lock is cleanly released
+    await new Promise(r => setTimeout(r, 80));
+    if (!($('.scr.on') && $('.scr.on').dataset.s === 'admin')) return;
+    const a = await api('auditLogs');
+    if (a && a.ok) { AD.logs = a.logs || []; AD.auditErr = ''; }
+    else { AD.logs = []; AD.auditErr = isNet(a) ? 'Audit logs load nahi hue (network).' : 'Is backend me security audit log abhi enable nahi hai. Backend (Apps Script) me "auditLogs" action add hone par yahan Geolocation Audit apne aap dikhne lagega.'; }
+    AD.kpi.suspicious24h = AD.logs.filter(l => GRP.bad.includes(l.event) && Date.parse(l.tsISO) >= dayAgo).length;
+    renderAdmin();
   } finally {
     AD.busy = false;
   }
-  if (!u.ok) {
-    if (denied(u)) return handleSessionFail(u);
-    if (!silent) $('#adBody').innerHTML = `<div class="empty">${esc(em(u))}</div>`;
-    return;
-  }
-  AD.users = u.users || [];
-  if (a && a.ok) { AD.logs = a.logs || []; AD.auditErr = ''; }
-  else { AD.logs = []; AD.auditErr = isNet(a) ? 'Audit logs load nahi hue (network).' : 'Is backend me security audit log abhi enable nahi hai. Backend (Apps Script) me "auditLogs" action add hone par yahan Geolocation Audit apne aap dikhne lagega.'; }
-  const dayAgo = Date.now() - 86400000;
-  AD.kpi = {
-    total: AD.users.length,
-    pending: AD.users.filter(x => stNorm(x.status) === 'pending').length,
-    activeDevices: AD.users.filter(x => stNorm(x.status) === 'active' && x.device).length,
-    suspicious24h: AD.logs.filter(l => GRP.bad.includes(l.event) && Date.parse(l.tsISO) >= dayAgo).length
-  };
-  renderAdmin();
 }
 function renderKpi() {
   const k = AD.kpi || {};
@@ -2156,14 +2220,40 @@ function logRows() {
   }).join('');
   return `<div class="twrap"><table class="tbl"><thead><tr><th>Timestamp (IST)</th><th>User</th><th>Event</th><th>Device</th><th>IP &amp; ISP</th><th>Coordinates</th><th>Reverse-Geocoded Address</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-function renderAdmin() {
+function animateAdminBody(dir, isSearch) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = $('#adBody');
+  if (!el || typeof el.animate !== 'function') return;
+  el.getAnimations().forEach(a => a.cancel());
+  const fromTransform = isSearch ? 'translate3d(0, 6px, 0)' : `translate3d(${(dir || 1) * 14}px, 0, 0)`;
+  el.animate(
+    [{ opacity: isSearch ? 0.65 : 0, transform: fromTransform }, { opacity: 1, transform: 'none' }],
+    { duration: isSearch ? 220 : 280, easing: isSearch ? 'cubic-bezier(0.34, 1.45, 0.64, 1)' : 'cubic-bezier(0.22, 1.24, 0.36, 1)' }
+  );
+}
+function renderAdmin(animOpts) {
   renderKpi();
   $('#adChips').hidden = AD.tab !== 'logs';
   $('#adBody').innerHTML = AD.tab === 'users' ? userRows() : logRows();
+  if (animOpts) animateAdminBody(animOpts.dir, animOpts.search);
 }
-$$('[data-at]').forEach(b => b.addEventListener('click', () => { AD.tab = b.dataset.at; $$('[data-at]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
-$$('[data-f]').forEach(b => b.addEventListener('click', () => { AD.filter = b.dataset.f; $$('[data-f]').forEach(x => x.classList.toggle('on', x === b)); renderAdmin(); }));
-$('#adQ').addEventListener('input', e => { AD.q = e.target.value.trim(); renderAdmin(); });
+const atBtns = $$('[data-at]');
+atBtns.forEach((b, idx) => b.addEventListener('click', () => {
+  const prevIdx = atBtns.findIndex(x => x.classList.contains('on'));
+  const dir = prevIdx >= 0 && idx < prevIdx ? -1 : 1;
+  AD.tab = b.dataset.at;
+  atBtns.forEach(x => x.classList.toggle('on', x === b));
+  renderAdmin({ dir });
+}));
+const fBtns = $$('[data-f]');
+fBtns.forEach((b, idx) => b.addEventListener('click', () => {
+  const prevIdx = fBtns.findIndex(x => x.classList.contains('on'));
+  const dir = prevIdx >= 0 && idx < prevIdx ? -1 : 1;
+  AD.filter = b.dataset.f;
+  fBtns.forEach(x => x.classList.toggle('on', x === b));
+  renderAdmin({ dir });
+}));
+$('#adQ').addEventListener('input', e => { AD.q = e.target.value.trim(); renderAdmin({ search: true }); });
 $('#adRef').addEventListener('click', () => runBtnRefresh('#adRef', () => loadAdmin(), { label: 'Refreshing…', successLabel: 'Refreshed ✓', theme: 'cyan' }));
 $('#adLaunchStudio').addEventListener('click', () => runBtnRefresh('#adLaunchStudio', () => launchApp('studio'), { label: 'Launching…', successLabel: 'Ready 📋', theme: 'cyan' }));
 $('#adLaunchMaterial').addEventListener('click', () => runBtnRefresh('#adLaunchMaterial', () => launchApp('material'), { label: 'Launching…', successLabel: 'Ready 📦', theme: 'magenta' }));
@@ -2204,8 +2294,37 @@ $('#adBody').addEventListener('change', async e => {
  * MODALS
  * ========================================================================== */
 
-function openModal(html) { const m = $('#modal'); m.innerHTML = `<div class="mbox">${html}</div>`; m.classList.add('on'); }
-function closeModal() { const m = $('#modal'); m.classList.remove('on'); m.innerHTML = ''; }
+let _modalCloseTimer = 0;
+function openModal(html) {
+  const m = $('#modal');
+  if (!m) return;
+  clearTimeout(_modalCloseTimer);
+  m.classList.remove('closing');
+  m.innerHTML = `<div class="mbox">${html}</div>`;
+  m.classList.add('is-open');
+  const rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!rm) void m.offsetWidth;
+  m.classList.add('on');
+}
+function closeModal() {
+  const m = $('#modal');
+  if (!m || (!m.classList.contains('is-open') && !m.classList.contains('on'))) return;
+  clearTimeout(_modalCloseTimer);
+  const rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  m.classList.remove('on');
+  if (rm) {
+    m.classList.remove('closing', 'is-open');
+    m.innerHTML = '';
+    return;
+  }
+  m.classList.add('closing');
+  _modalCloseTimer = setTimeout(() => {
+    if (!m.classList.contains('on')) {
+      m.classList.remove('closing', 'is-open');
+      m.innerHTML = '';
+    }
+  }, 190);
+}
 $('#modal').addEventListener('mousedown', e => { if (e.target.id === 'modal') closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 function askConfirm(title, msg, okLabel, danger = true) {
